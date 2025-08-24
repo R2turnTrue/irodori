@@ -22,7 +22,7 @@ public unsafe class IrodoriSilkContext : IGLContext
         }
 
         _ctx = ctxRes.Value;
-        return IrodoriReturn<IrodoriVoid, IContextError>.Success();
+        return IrodoriReturn<IrodoriVoid, IContextError>.Success(IrodoriVoid.Void);
     }
     
     public void Dispose()
@@ -55,7 +55,7 @@ public unsafe class IrodoriSilkContext : IGLContext
 
     public void SwapBuffers()
     {
-        _window.GlSwapBuffers(_ctx);
+        _window.GlSwapBuffers();
     }
 
     public void MakeCurrent()

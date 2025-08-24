@@ -33,11 +33,13 @@ public abstract class Window
 
     public abstract void GlSwapInterval(int interval);
 
-    public abstract void GlSwapBuffers(IntPtr ctx);
+    public abstract void GlSwapBuffers();
     
     public abstract void GlMakeCurrent(IntPtr ctx);
     
     public abstract IntPtr GlGetCurrentContext();
 
     public abstract void PollEvents();
+
+    public abstract void SwapBuffers();
 }

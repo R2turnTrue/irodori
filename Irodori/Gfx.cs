@@ -1,6 +1,8 @@
-﻿using Irodori.Backend;
+﻿using System.Drawing;
+using Irodori.Backend;
 using Irodori.Buffer;
 using Irodori.Error;
+using Irodori.Shader;
 using Irodori.Type;
 using Irodori.Windowing;
 
@@ -57,7 +59,7 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
         }
     }
     
-    public static BeforeInitialize CreateVertexBuffer()
+    public static BeforeInitialize Create()
     {
         return new BeforeInitialize();
     }
@@ -103,8 +105,23 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
             .Success(this);
     }
 
-    public VertexBuffer<TFormat, TBackend>.VertexBufferUnuploaded CreateVertexBuffer<TFormat>(TFormat vertexFormat) where TFormat : VertexBufferFormat
+    public VertexBuffer.Unuploaded CreateVertexBuffer<TFormat>(TFormat vertexFormat) where TFormat : VertexBufferFormat
     {
-        return VertexBuffer<TFormat, TBackend>.Create(_backend, vertexFormat);
+        return VertexBuffer.Create(_backend, vertexFormat);
+    }
+    
+    public ShaderObject.BeforeCompile CreateShader(EShaderType type, string source)
+    {
+        return ShaderObject.Create(_backend, type, source);
+    }
+    
+    public ShaderProgram.BeforeLinking CreateShaderProgram()
+    {
+        return ShaderProgram.Create(_backend);
+    }
+    
+    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color)
+    {
+        return _backend.Clear(color);
     }
 }

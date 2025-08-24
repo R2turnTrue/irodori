@@ -4,10 +4,10 @@ namespace Irodori.Type;
 
 public class IrodoriReturn<T, TE> where TE : IError
 {
-    public T? Value { get; }
+    public T Value { get; }
     public TE? Error { get; }
 
-    private IrodoriReturn(T? value, TE? error)
+    private IrodoriReturn(T value, TE? error)
     {
         Value = value;
         Error = error;
@@ -33,6 +33,5 @@ public class IrodoriReturn<T, TE> where TE : IError
     }
 
     public static IrodoriReturn<T, TE> Success(T value) => new(value, default);
-    public static IrodoriReturn<T, TE> Success() => new(default, default);
     public static IrodoriReturn<T, TE> Failure(TE? error) => new(default, error);
 }

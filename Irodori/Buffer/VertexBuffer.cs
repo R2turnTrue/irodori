@@ -1,43 +1,42 @@
 ﻿using Irodori.Backend;
 using Irodori.Error;
+using Irodori.Shader;
 using Irodori.Type;
 using Irodori.Windowing;
 
 namespace Irodori.Buffer;
 
-public abstract class VertexBuffer<TFormat, TBackend> where TFormat : VertexBufferFormat where TBackend : IBackend<TBackend>
+public abstract class VertexBuffer
 {
-    public TFormat Format { get; private set; }
+    public VertexBufferFormat Format { get; protected set; }
     
-    protected TBackend Backend { get; private set; }
+    public IBackend Backend { get; protected set; }
     
-    public class VertexBufferUnuploaded : VertexBuffer<TFormat, TBackend>
+    public class Unuploaded : VertexBuffer
     {
-        internal VertexBufferUnuploaded() { }
+        public VertexData Data { get; private set; }
+        public int[]? Indices { get; private set; }
         
-        public IrodoriReturn<VertexBufferUploaded, IBufferError> Upload()
-        {
-            var result = Backend.BufferHandler.UploadVertexBuffer<>(this.Format);
-            if (result.IsErr)
-            {
-                return IrodoriReturn<VertexBufferUploaded, IBufferError>.Err(result.Err);
-            }
+        internal Unuploaded() { }
 
-            var buffer = result.Ok;
-            buffer.Format = this.Format;
-            buffer.Backend = this.Backend;
-            return IrodoriReturn<VertexBufferUploaded, IBufferError>.Ok(buffer);
+        public IrodoriReturn<Uploaded, IBufferError> Upload(VertexData data, int[]? indices = null)
+        {
+            Data = data;
+            Indices = indices;
+            return Backend.UploadVertexBuffer(this);
         }
     }
 
-    public abstract class VertexBufferUploaded : VertexBuffer<TFormat, TBackend>
+    public abstract class Uploaded : VertexBuffer, IDisposable
     {
-        internal VertexBufferUploaded() { }
+        public abstract void Dispose();
+        
+        public abstract IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program);
     }
 
-    internal static VertexBufferUnuploaded Create(TBackend backend, TFormat format)
+    internal static Unuploaded Create(IBackend backend, VertexBufferFormat format)
     {
-        return new VertexBufferUnuploaded
+        return new Unuploaded
         {
             Backend = backend,
             Format = format

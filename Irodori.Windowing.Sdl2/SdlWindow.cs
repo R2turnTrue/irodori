@@ -7,7 +7,9 @@ using SDL2;
 namespace Irodori.Windowing.Sdl2;
 
 public class SdlWindow : Window
-{ 
+{
+    private IBackend _backend;
+    
     public IntPtr Handle
     {
         get;
@@ -26,6 +28,7 @@ public class SdlWindow : Window
     
     internal IrodoriReturn<SdlWindow, IWindowingError> Init(InitConfig config, IBackend backend)
     {
+        _backend = backend;
         var flag = SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN;
         
         if (config.Fullscreen)
@@ -42,6 +45,11 @@ public class SdlWindow : Window
         {
             case ERendererAPI.OpenGl:
                 flag |= SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL;
+                SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_PROFILE_MASK,
+                    SDL.SDL_GLprofile.SDL_GL_CONTEXT_PROFILE_CORE);
+                
+                SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MINOR_VERSION, 3);
+                SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 3);
                 break;
             case ERendererAPI.Vulkan:
                 flag |= SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN;
@@ -120,7 +128,7 @@ public class SdlWindow : Window
         SDL.SDL_GL_SetSwapInterval(interval);
     }
 
-    public override void GlSwapBuffers(IntPtr ctx)
+    public override void GlSwapBuffers()
     {
         SDL.SDL_GL_SwapWindow(Handle);
     }
@@ -150,5 +158,11 @@ public class SdlWindow : Window
                     break;
             }
         }
+    }
+    
+    public override void SwapBuffers()
+    {
+        if (_backend.RendererApi == ERendererAPI.OpenGl)
+            SDL.SDL_GL_SwapWindow(Handle);
     }
 }
