@@ -1,17 +1,18 @@
 ﻿using Irodori.Backend;
+using Irodori.Buffer;
 using Irodori.Error;
 using Irodori.Type;
 using Irodori.Windowing;
 
 namespace Irodori;
 
-public class Gfx<TB, TW> where TB: IBackend where TW : Window
+public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
 {
     public class BeforeInitialize
     {
         internal BeforeInitialize() { }
         
-        public InitializerWindowingStep WithBackend(TB backend)
+        public InitializerWindowingStep WithBackend(TBackend backend)
         {
             return new InitializerWindowingStep(backend);
         }
@@ -19,9 +20,9 @@ public class Gfx<TB, TW> where TB: IBackend where TW : Window
     
     public class InitializerWindowingStep
     {
-        private readonly TB _backend;
+        private readonly TBackend _backend;
 
-        internal InitializerWindowingStep(TB backend)
+        internal InitializerWindowingStep(TBackend backend)
         {
             this._backend = backend;
         }
@@ -34,11 +35,11 @@ public class Gfx<TB, TW> where TB: IBackend where TW : Window
 
     public class InitializerFinalStep
     {
-        private readonly TB _backend;
+        private readonly TBackend _backend;
         private readonly IWindowing<TW> _windowing;
         private readonly Window.InitConfig _windowConfig;
 
-        internal InitializerFinalStep(TB backend, IWindowing<TW> windowing, Window.InitConfig windowConfig)
+        internal InitializerFinalStep(TBackend backend, IWindowing<TW> windowing, Window.InitConfig windowConfig)
         {
             this._backend = backend;
             this._windowing = windowing;
@@ -50,18 +51,18 @@ public class Gfx<TB, TW> where TB: IBackend where TW : Window
             return new InitializerFinalStep(_backend, _windowing, config);
         }
 
-        public IrodoriReturn<Gfx<TB, TW>, IInitializationError> Init()
+        public IrodoriReturn<Gfx<TBackend, TW>, IInitializationError> Init()
         {
-            return new Gfx<TB, TW>(_backend, _windowing, _windowConfig).Init();
+            return new Gfx<TBackend, TW>(_backend, _windowing, _windowConfig).Init();
         }
     }
     
-    public static BeforeInitialize Create()
+    public static BeforeInitialize CreateVertexBuffer()
     {
         return new BeforeInitialize();
     }
     
-    private readonly TB _backend;
+    private readonly TBackend _backend;
     private readonly IWindowing<TW> _windowing;
     private readonly Window.InitConfig _windowConfig;
     
@@ -71,20 +72,20 @@ public class Gfx<TB, TW> where TB: IBackend where TW : Window
         private set;
     }
     
-    private Gfx(TB backend, IWindowing<TW> windowing, Window.InitConfig config)
+    private Gfx(TBackend backend, IWindowing<TW> windowing, Window.InitConfig config)
     { 
         _backend = backend;
         _windowing = windowing;
         _windowConfig = config;
     }
 
-    private IrodoriReturn<Gfx<TB, TW>, IInitializationError> Init()
+    private IrodoriReturn<Gfx<TBackend, TW>, IInitializationError> Init()
     {
         var winResult = _windowing.CreateWindow(_windowConfig, _backend);
 
         if (winResult.Value == null)
         {
-            return IrodoriReturn<Gfx<TB, TW>, IInitializationError>
+            return IrodoriReturn<Gfx<TBackend, TW>, IInitializationError>
                 .Failure(winResult.Error);
         }
 
@@ -94,11 +95,16 @@ public class Gfx<TB, TW> where TB: IBackend where TW : Window
 
         if (beResult.Error != null)
         {
-            return IrodoriReturn<Gfx<TB, TW>, IInitializationError>
+            return IrodoriReturn<Gfx<TBackend, TW>, IInitializationError>
                 .Failure(beResult.Error);
         }
 
-        return IrodoriReturn<Gfx<TB, TW>, IInitializationError>
+        return IrodoriReturn<Gfx<TBackend, TW>, IInitializationError>
             .Success(this);
+    }
+
+    public VertexBuffer<TFormat, TBackend>.VertexBufferUnuploaded CreateVertexBuffer<TFormat>(TFormat vertexFormat) where TFormat : VertexBufferFormat
+    {
+        return VertexBuffer<TFormat, TBackend>.Create(_backend, vertexFormat);
     }
 }

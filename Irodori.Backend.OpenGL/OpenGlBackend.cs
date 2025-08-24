@@ -6,9 +6,15 @@ using Silk.NET.OpenGL;
 
 namespace Irodori.Backend.OpenGL;
 
-public class OpenGlBackend : IBackend
+public class OpenGlBackend : IBackend<OpenGlBackend>
 {
     public ERendererAPI RendererApi => ERendererAPI.OpenGl;
+
+    public IBufferHandler<OpenGlBackend> BufferHandler
+    {
+        get;
+        private set;
+    }
 
     private GL _gl;
     
@@ -27,6 +33,8 @@ public class OpenGlBackend : IBackend
         Console.WriteLine("OpenGL Version: " + _gl.GetStringS(StringName.Version));
         Console.WriteLine("OpenGL Vendor: " + _gl.GetStringS(StringName.Vendor));
         #endif
+
+        BufferHandler = new OpenGlBufferHandler(_gl);
         
         return IrodoriReturn<IrodoriVoid, IBackendInitError>.Success();
     }
