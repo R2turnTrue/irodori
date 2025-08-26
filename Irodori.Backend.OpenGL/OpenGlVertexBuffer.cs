@@ -104,6 +104,8 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
 
         uint positionLoc = 0;
         nint ptrOffset = 0;
+
+        var stride = buffer.Format.Stride;
         foreach (var sig in buffer.Format.Attributes)
         {
             gl.EnableVertexAttribArray(positionLoc);
@@ -116,10 +118,10 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             nint ptrSize = sig.Count * Marshal.SizeOf(sig.Type.ToDotNetType());
             
             #if DEBUG
-            Console.WriteLine($"Sig #{positionLoc} Type {sig.Type} ({sig.Type.ToVertexAttribPointerType()}) Count {sig.Count} Size {ptrSize} Offset {ptrOffset}");
+            Console.WriteLine($"Sig #{positionLoc} Type {sig.Type} ({sig.Type.ToVertexAttribPointerType()}) Count {sig.Count} Size {ptrSize} Offset {ptrOffset} Stride {stride}");
             #endif
             gl.VertexAttribPointer(positionLoc, sig.Count, sig.Type.ToVertexAttribPointerType(), false,
-                (uint)(ptrSize), (void*)ptrOffset);
+                stride, (void*)ptrOffset);
             glError = gl.CheckError();
             if (glError != null)
             {

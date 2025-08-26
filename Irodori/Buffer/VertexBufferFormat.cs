@@ -1,4 +1,6 @@
-﻿namespace Irodori.Buffer;
+﻿using System.Runtime.InteropServices;
+
+namespace Irodori.Buffer;
 
 public class VertexBufferFormat
 {
@@ -96,6 +98,15 @@ public class VertexBufferFormat
     {
         get;
         private set;
+    }
+
+    public uint Stride
+    {
+        get => (uint)Attributes.Sum(attrib =>
+        {
+            int typeSize = Marshal.SizeOf(attrib.Type.ToDotNetType());
+            return typeSize * attrib.Count;
+        });
     }
 
     private VertexBufferFormat(List<Attrib> attributes)
