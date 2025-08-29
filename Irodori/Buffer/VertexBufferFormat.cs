@@ -104,7 +104,7 @@ public class VertexBufferFormat
     {
         get => (uint)Attributes.Sum(attrib =>
         {
-            int typeSize = Marshal.SizeOf(attrib.Type.ToDotNetType());
+            int typeSize = attrib.Type.GetSizeInBytes();
             return typeSize * attrib.Count;
         });
     }

@@ -2,28 +2,28 @@
 
 public static class VertexBufferFormatTypeExtension
 {
-    public static System.Type ToDotNetType(this VertexBufferFormat.FormatType fmt)
+    public static int GetSizeInBytes(this VertexBufferFormat.FormatType fmt)
     {
         switch (fmt)
         {
             case VertexBufferFormat.FormatType.Byte:
-                return typeof(sbyte);
+                return sizeof(sbyte);
             case VertexBufferFormat.FormatType.UnsignedByte:
-                return typeof(byte);
+                return sizeof(byte);
             case VertexBufferFormat.FormatType.Short:
-                return typeof(short);
+                return sizeof(short);
             case VertexBufferFormat.FormatType.UnsignedShort:
-                return typeof(ushort);
+                return sizeof(ushort);
             case VertexBufferFormat.FormatType.Int:
-                return typeof(int);
+                return sizeof(int);
             case VertexBufferFormat.FormatType.UnsignedInt:
-                return typeof(uint);
+                return sizeof(uint);
             case VertexBufferFormat.FormatType.Fixed:
-                return typeof(int); // Fixed point is typically represented as an integer
+                return sizeof(int); // Fixed point is typically represented as an integer
             case VertexBufferFormat.FormatType.HalfFloat:
-                return typeof(Half); // Half-precision float
+                return sizeof(ushort); // Half-precision float
             case VertexBufferFormat.FormatType.Float:
-                return typeof(float);
+                return sizeof(float);
             default:
                 throw new ArgumentOutOfRangeException(nameof(fmt), fmt, null);
         }

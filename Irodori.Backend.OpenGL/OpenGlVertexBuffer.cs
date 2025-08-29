@@ -115,7 +115,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
                 return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
             }
 
-            nint ptrSize = sig.Count * Marshal.SizeOf(sig.Type.ToDotNetType());
+            nint ptrSize = sig.Count * sig.Type.GetSizeInBytes();
             
             #if DEBUG
             Console.WriteLine($"Sig #{positionLoc} Type {sig.Type} ({sig.Type.ToVertexAttribPointerType()}) Count {sig.Count} Size {ptrSize} Offset {ptrOffset} Stride {stride}");
