@@ -1,5 +1,6 @@
 ﻿using Irodori.Backend;
 using Irodori.Error;
+using Irodori.Framebuffer;
 using Irodori.Shader;
 using Irodori.Type;
 using Irodori.Windowing;
@@ -31,7 +32,7 @@ public abstract class VertexBuffer
     {
         public abstract void Dispose();
         
-        public abstract IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program);
+        public abstract IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program, FramebufferObject? framebuffer = null);
     }
 
     internal static Unuploaded Create(IBackend backend, VertexBufferFormat format)

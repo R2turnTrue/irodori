@@ -1,7 +1,9 @@
 ﻿using System.Drawing;
 using Irodori.Buffer;
 using Irodori.Error;
+using Irodori.Framebuffer;
 using Irodori.Shader;
+using Irodori.Texture;
 using Irodori.Type;
 using Irodori.Windowing;
 
@@ -19,7 +21,9 @@ public interface IBackend
     
     public IrodoriReturn<ShaderProgram.Linked, IShaderError> LinkShader(ShaderProgram.BeforeLinking program);
     
-    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color);
+    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color, Window window, FramebufferObject.Uploaded? framebuffer = null);
     
-    IrodoriReturn<Texture.TextureObject.Uploaded, ITextureError> UploadTexture(Texture.TextureObject.Unuploaded texture);
+    IrodoriReturn<TextureObjectUploaded, ITextureError> UploadTexture(TextureObjectUnuploaded texture);
+    
+    IrodoriReturn<FramebufferObject.Uploaded, IFramebufferError> UploadFramebuffer(FramebufferObject.Unuploaded framebuffer);
 }

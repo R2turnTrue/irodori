@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Irodori.Buffer;
 using Irodori.Error;
+using Irodori.Framebuffer;
 using Irodori.Shader;
 using Irodori.Type;
 using Silk.NET.OpenGL;
@@ -162,10 +163,15 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         }
     }
 
-    public override unsafe IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program)
+    public override unsafe IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program, FramebufferObject? framebuffer = null)
     {
         OpenGlException? glError;
         var gl = ((OpenGlBackend)Backend).Gl;
+        
+        if (framebuffer != null)
+            gl.BindFramebuffer(FramebufferTarget.Framebuffer, ((OpenGlFramebuffer)framebuffer).Id);
+        else
+            gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         
         gl.BindVertexArray(_vao);
         glError = gl.CheckError();
@@ -184,10 +190,13 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         if (_ebo.HasValue)
             gl.DrawElements(PrimitiveType.Triangles, (uint) _indexCount, DrawElementsType.UnsignedInt, (void*) 0);
         else
-            gl.DrawArrays(PrimitiveType.Triangles, 0, (uint) _indexCount);
-        
+        {
+            gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)_indexCount);
+        }
+
         gl.BindVertexArray(0);
         gl.UseProgram(0);
+        gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
         return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
     }

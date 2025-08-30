@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Irodori.Buffer;
 using Irodori.Error;
+using Irodori.Framebuffer;
 using Irodori.Shader;
 using Irodori.Texture;
 using Irodori.Type;
@@ -28,6 +29,8 @@ public class OpenGlBackend : IBackend
         
         Gl = GL.GetApi(ctx);
         
+        Gl.Enable(EnableCap.DepthTest);
+        
         #if DEBUG
         Console.WriteLine("OpenGL Version: " + Gl.GetStringS(StringName.Version));
         Console.WriteLine("OpenGL Vendor: " + Gl.GetStringS(StringName.Vendor));
@@ -51,8 +54,20 @@ public class OpenGlBackend : IBackend
         return new OpenGlShaderProgram(program).Link(program);
     }
 
-    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color)
+    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color, Window window, FramebufferObject.Uploaded? framebuffer = null)
     {
+        if (framebuffer != null)
+        {
+            var fb = (OpenGlFramebuffer)framebuffer;
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, fb.Id);
+            Gl.Viewport(0, 0, fb.Width, fb.Height);
+        }
+        else
+        {
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            Gl.Viewport(0, 0, window.GetWidth(), window.GetHeight());
+        }
+        
         Gl.ClearColor(color);
         Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         OpenGlException? glError;
@@ -62,11 +77,18 @@ public class OpenGlBackend : IBackend
             return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
         }
         
+        Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        
         return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
     }
 
-    public IrodoriReturn<TextureObject.Uploaded, ITextureError> UploadTexture(TextureObject.Unuploaded texture)
+    public IrodoriReturn<TextureObjectUploaded, ITextureError> UploadTexture(TextureObjectUnuploaded texture)
     {
         return new OpenGlTexture().Upload(texture);
+    }
+
+    public IrodoriReturn<FramebufferObject.Uploaded, IFramebufferError> UploadFramebuffer(FramebufferObject.Unuploaded framebuffer)
+    {
+        return new OpenGlFramebuffer().Upload(framebuffer);
     }
 }

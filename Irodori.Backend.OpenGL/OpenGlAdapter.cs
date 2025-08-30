@@ -123,58 +123,93 @@ public static class OpenGlAdapter
             ETextureInternalType.CompressedSrgbAlphaBptcUnorm => InternalFormat.CompressedSrgbAlphaBptcUnorm,
             //ETextureInternalType.CompressedRgbaBptcSignedFloat => InternalFormat.CompressedRgbaBptcUnorm,
             //ETextureInternalType.CompressedRgbaBptcUnsignedFloat => InternalFormat.CompressedRgbaBptcUnsignedFloat,
+            
+            ETextureInternalType.Depth24Stencil8 => InternalFormat.Depth24Stencil8,
+            ETextureInternalType.Depth24Stencil8Ext => InternalFormat.Depth24Stencil8Ext,
+            ETextureInternalType.Depth24Stencil8Oes => InternalFormat.Depth24Stencil8Oes,
 
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
 
-    public static PixelFormat ToSilk(this TextureObject.PixelFormat fmt)
+    public static PixelFormat ToSilk(this EPixelFormat fmt)
     {
         return fmt switch
         {
-            TextureObject.PixelFormat.Red => PixelFormat.Red,
-            TextureObject.PixelFormat.Rg => PixelFormat.RG,
-            TextureObject.PixelFormat.Rgb => PixelFormat.Rgb,
-            TextureObject.PixelFormat.Bgr => PixelFormat.Bgr,
-            TextureObject.PixelFormat.Rgba => PixelFormat.Rgba,
-            TextureObject.PixelFormat.Bgra => PixelFormat.Bgra,
-            TextureObject.PixelFormat.RedInteger => PixelFormat.RedInteger,
-            TextureObject.PixelFormat.RgInteger => PixelFormat.RGInteger,
-            TextureObject.PixelFormat.RgbInteger => PixelFormat.RgbInteger,
-            TextureObject.PixelFormat.BgrInteger => PixelFormat.BgrInteger,
-            TextureObject.PixelFormat.RgbaInteger => PixelFormat.RgbaInteger,
-            TextureObject.PixelFormat.BgraInteger => PixelFormat.BgraInteger,
-            TextureObject.PixelFormat.StencilIndex => PixelFormat.StencilIndex,
-            TextureObject.PixelFormat.DepthComponent => PixelFormat.DepthComponent,
-            TextureObject.PixelFormat.DepthStencil => PixelFormat.DepthStencil,
+            EPixelFormat.Red => PixelFormat.Red,
+            EPixelFormat.Rg => PixelFormat.RG,
+            EPixelFormat.Rgb => PixelFormat.Rgb,
+            EPixelFormat.Bgr => PixelFormat.Bgr,
+            EPixelFormat.Rgba => PixelFormat.Rgba,
+            EPixelFormat.Bgra => PixelFormat.Bgra,
+            EPixelFormat.RedInteger => PixelFormat.RedInteger,
+            EPixelFormat.RgInteger => PixelFormat.RGInteger,
+            EPixelFormat.RgbInteger => PixelFormat.RgbInteger,
+            EPixelFormat.BgrInteger => PixelFormat.BgrInteger,
+            EPixelFormat.RgbaInteger => PixelFormat.RgbaInteger,
+            EPixelFormat.BgraInteger => PixelFormat.BgraInteger,
+            EPixelFormat.StencilIndex => PixelFormat.StencilIndex,
+            EPixelFormat.DepthComponent => PixelFormat.DepthComponent,
+            EPixelFormat.DepthStencil => PixelFormat.DepthStencil,
             _ => throw new ArgumentOutOfRangeException(nameof(fmt), fmt, null)
         };
     }
     
-    public static PixelType ToSilk(this TextureObject.PixelType type)
+    public static PixelType ToSilk(this EPixelType type)
     {
         return type switch
         {
-            TextureObject.PixelType.UnsignedByte => PixelType.UnsignedByte,
-            TextureObject.PixelType.Byte => PixelType.Byte,
-            TextureObject.PixelType.UnsignedShort => PixelType.UnsignedShort,
-            TextureObject.PixelType.Short => PixelType.Short,
-            TextureObject.PixelType.UnsignedInt => PixelType.UnsignedInt,
-            TextureObject.PixelType.Int => PixelType.Int,
-            TextureObject.PixelType.Float => PixelType.Float,
-            TextureObject.PixelType.UnsignedByte332 => PixelType.UnsignedByte332,
-            TextureObject.PixelType.UnsignedByte233Rev => PixelType.UnsignedByte233Rev,
-            TextureObject.PixelType.UnsignedShort565 => PixelType.UnsignedShort565,
-            TextureObject.PixelType.UnsignedShort565Rev => PixelType.UnsignedShort565Rev,
-            TextureObject.PixelType.UnsignedShort4444 => PixelType.UnsignedShort4444,
-            TextureObject.PixelType.UnsignedShort4444Rev => PixelType.UnsignedShort4444Rev,
-            TextureObject.PixelType.UnsignedShort5551 => PixelType.UnsignedShort5551,
-            TextureObject.PixelType.UnsignedShort1555Rev => PixelType.UnsignedShort1555Rev,
-            TextureObject.PixelType.UnsignedInt8888 => PixelType.UnsignedInt8888,
-            TextureObject.PixelType.UnsignedInt8888Rev => PixelType.UnsignedInt8888Rev,
-            TextureObject.PixelType.UnsignedInt1010102 => PixelType.UnsignedInt1010102,
-            TextureObject.PixelType.UnsignedInt2101010Rev => PixelType.UnsignedInt2101010Rev,
+            EPixelType.UnsignedByte => PixelType.UnsignedByte,
+            EPixelType.Byte => PixelType.Byte,
+            EPixelType.UnsignedShort => PixelType.UnsignedShort,
+            EPixelType.Short => PixelType.Short,
+            EPixelType.UnsignedInt => PixelType.UnsignedInt,
+            EPixelType.Int => PixelType.Int,
+            EPixelType.Float => PixelType.Float,
+            EPixelType.UnsignedByte332 => PixelType.UnsignedByte332,
+            EPixelType.UnsignedByte233Rev => PixelType.UnsignedByte233Rev,
+            EPixelType.UnsignedShort565 => PixelType.UnsignedShort565,
+            EPixelType.UnsignedShort565Rev => PixelType.UnsignedShort565Rev,
+            EPixelType.UnsignedShort4444 => PixelType.UnsignedShort4444,
+            EPixelType.UnsignedShort4444Rev => PixelType.UnsignedShort4444Rev,
+            EPixelType.UnsignedShort5551 => PixelType.UnsignedShort5551,
+            EPixelType.UnsignedShort1555Rev => PixelType.UnsignedShort1555Rev,
+            EPixelType.UnsignedInt8888 => PixelType.UnsignedInt8888,
+            EPixelType.UnsignedInt8888Rev => PixelType.UnsignedInt8888Rev,
+            EPixelType.UnsignedInt1010102 => PixelType.UnsignedInt1010102,
+            EPixelType.UnsignedInt2101010Rev => PixelType.UnsignedInt2101010Rev,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+    }
+
+    public static int ToSilkMinFilter(this ETextureFilter filter)
+    {
+        return filter switch
+        {
+            ETextureFilter.Nearest => (int)TextureMinFilter.Nearest,
+            ETextureFilter.Linear => (int)TextureMinFilter.Linear,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+    }
+    
+    public static int ToSilkMagFilter(this ETextureFilter filter)
+    {
+        return filter switch
+        {
+            ETextureFilter.Nearest => (int)TextureMagFilter.Nearest,
+            ETextureFilter.Linear => (int)TextureMagFilter.Linear,
+            _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+        };
+    }
+    
+    public static int ToSilk(this ETextureWrapMode mode)
+    {
+        return mode switch
+        {
+            ETextureWrapMode.ClampToEdge => (int)TextureWrapMode.ClampToEdge,
+            ETextureWrapMode.MirroredRepeat => (int)TextureWrapMode.MirroredRepeat,
+            ETextureWrapMode.Repeat => (int)TextureWrapMode.Repeat,
+            _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
         };
     }
 }

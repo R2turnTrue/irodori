@@ -84,7 +84,7 @@ public abstract class VertexData
         internal P1() {}
 
         public override int SizeInBytes => sizeof(T1) * _vertices.Count;
-        public override int Count => 1;
+        public override int Count => _vertices.Count;
 
         public P1<T1> AddVertex(T1 v1)
         {
@@ -117,7 +117,7 @@ public abstract class VertexData
 
         public override int SizeInBytes => (sizeof(T1) + sizeof(T2)) * _vertices.Count;
         
-        public override int Count => 2;
+        public override int Count => _vertices.Count;
 
         public P2<T1, T2> AddVertex(T1 v1, T2 v2)
         {
@@ -154,7 +154,7 @@ public abstract class VertexData
 
         public override int SizeInBytes => (sizeof(T1) + sizeof(T2) + sizeof(T3)) * _vertices.Count;
         
-        public override int Count => 3;
+        public override int Count => _vertices.Count;
 
         public P3<T1, T2, T3> AddVertex(T1 v1, T2 v2, T3 v3)
         {
@@ -195,7 +195,7 @@ public abstract class VertexData
 
         public override int SizeInBytes => (sizeof(T1) + sizeof(T2) + sizeof(T3) + sizeof(T4)) * _vertices.Count;
         
-        public override int Count => 4;
+        public override int Count => _vertices.Count;
 
         public P4<T1, T2, T3, T4> AddVertex(T1 v1, T2 v2, T3 v3, T4 v4)
         {
@@ -241,7 +241,7 @@ public abstract class VertexData
         public override int SizeInBytes =>
             (sizeof(T1) + sizeof(T2) + sizeof(T3) + sizeof(T4) + sizeof(T5)) * _vertices.Count;
         
-        public override int Count => 5;
+        public override int Count => _vertices.Count;
 
         public P5<T1, T2, T3, T4, T5> AddVertex(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5)
         {
@@ -291,7 +291,7 @@ public abstract class VertexData
         public override int SizeInBytes =>
             (sizeof(T1) + sizeof(T2) + sizeof(T3) + sizeof(T4) + sizeof(T5) + sizeof(T6)) * _vertices.Count;
         
-        public override int Count => 6;
+        public override int Count => _vertices.Count;
 
         public P6<T1, T2, T3, T4, T5, T6> AddVertex(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6)
         {
@@ -346,7 +346,7 @@ public abstract class VertexData
             (sizeof(T1) + sizeof(T2) + sizeof(T3) + sizeof(T4) + sizeof(T5) + sizeof(T6) + sizeof(T7)) *
             _vertices.Count;
         
-        public override int Count => 7;
+        public override int Count => _vertices.Count;
 
         public P7<T1, T2, T3, T4, T5, T6, T7> AddVertex(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6, T7 v7)
         {
@@ -405,7 +405,7 @@ public abstract class VertexData
             (sizeof(T1) + sizeof(T2) + sizeof(T3) + sizeof(T4) + sizeof(T5) + sizeof(T6) + sizeof(T7) + sizeof(T8)) *
             _vertices.Count;
         
-        public override int Count => 8;
+        public override int Count => _vertices.Count;
 
         public P8<T1, T2, T3, T4, T5, T6, T7, T8> AddVertex(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6, T7 v7, T8 v8)
         {

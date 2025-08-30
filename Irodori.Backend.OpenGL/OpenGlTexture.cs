@@ -5,7 +5,7 @@ using Silk.NET.OpenGL;
 
 namespace Irodori.Backend.OpenGL;
 
-public class OpenGlTexture : TextureObject.Uploaded
+public class OpenGlTexture : TextureObjectUploaded
 {
     public uint Id { get; private set; }
     
@@ -13,47 +13,47 @@ public class OpenGlTexture : TextureObject.Uploaded
     {
     }
 
-    public unsafe IrodoriReturn<TextureObject.Uploaded, ITextureError> Upload(TextureObject.Unuploaded texture)
+    public unsafe IrodoriReturn<TextureObjectUploaded, ITextureError> Upload(TextureObjectUnuploaded texture)
     {
         this.Width = texture.Width;
         this.Height = texture.Height;
         this.Backend = texture.Backend;
-        this.Mipmap = texture.Mipmap;
+        this.MinFilter = texture.MinFilter;
+        this.MagFilter = texture.MagFilter;
+        this.WrapX = texture.WrapX;
+        this.WrapY = texture.WrapY;
         var gl = ((OpenGlBackend)Backend).Gl;
 
         OpenGlException? glError;
-
+        
         Id = gl.GenTexture();
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, ITextureError>.Failure(glError);
+            return IrodoriReturn<TextureObjectUploaded, ITextureError>.Failure(glError);
         }
-        
         
         gl.BindTexture(TextureTarget.Texture2D, Id);
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, ITextureError>.Failure(glError);
+            return IrodoriReturn<TextureObjectUploaded, ITextureError>.Failure(glError);
         }
         
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
+        UpdateProperties();
         
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Nearest);
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Nearest);
+        gl.TexImage2D(TextureTarget.Texture2D, 0, texture.Type.ToSilk(), (uint) texture.Width, (uint) texture.Height, 0, texture.Data.DataFormat.ToSilk(), texture.Data.DataType.ToSilk(), texture.Data.Pointer);
+        texture.Data.FreePtrIfNeed();
         
-        gl.TexImage2D(TextureTarget.Texture2D, 0, texture.Type.ToSilk(), (uint) texture.Width, (uint) texture.Height, 0, texture.DataFormat.ToSilk(), texture.DataType.ToSilk(), texture.Data.ToPointer());
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, ITextureError>.Failure(glError);
+            return IrodoriReturn<TextureObjectUploaded, ITextureError>.Failure(glError);
         }
         
         gl.BindTexture(TextureTarget.Texture2D, 0);
         
-        return IrodoriReturn<Uploaded, ITextureError>.Success(this);
+        return IrodoriReturn<TextureObjectUploaded, ITextureError>.Success(this);
     }
 
     public override void Dispose()
@@ -64,5 +64,16 @@ public class OpenGlTexture : TextureObject.Uploaded
         gl.DeleteTexture(Id);
         
         Id = 0;
+    }
+
+    protected override void UpdateProperties()
+    {
+        var gl = ((OpenGlBackend)Backend).Gl;
+        
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, WrapX.ToSilk());
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, WrapY.ToSilk());
+        
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, MinFilter.ToSilkMinFilter());
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, MagFilter.ToSilkMagFilter());
     }
 }

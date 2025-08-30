@@ -1,4 +1,5 @@
-﻿using Irodori.Backend;
+﻿using System.Numerics;
+using Irodori.Backend;
 using Irodori.Error;
 using Irodori.Texture;
 using Irodori.Type;
@@ -29,17 +30,22 @@ public abstract class ShaderProgram
     
     public abstract class Linked : ShaderProgram, IDisposable
     {
-        protected Dictionary<string, TextureObject.Uploaded> Textures { get; } = new();
+        protected Dictionary<string, TextureObjectUploaded> Textures { get; } = new();
         protected Dictionary<string, int> Integers { get; } = new();
         protected Dictionary<string, float> Floats { get; } = new();
         
-        public ShaderProgram SetTexture(string name, TextureObject.Uploaded texture)
+        protected Dictionary<string, Vector2> Vec2s { get; } = new();
+        protected Dictionary<string, Vector3> Vec3s { get; } = new();
+        protected Dictionary<string, Vector4> Vec4s { get; } = new();
+        protected Dictionary<string, Matrix4x4> Mat4s { get; } = new();
+        
+        public ShaderProgram SetTexture(string name, TextureObjectUploaded texture)
         {
             Textures[name] = texture;
             return this;
         }
         
-        public TextureObject.Uploaded? GetTexture(string name)
+        public TextureObjectUploaded? GetTexture(string name)
         {
             if (Textures.TryGetValue(name, out var texture))
             {
@@ -74,6 +80,70 @@ public abstract class ShaderProgram
         public float? GetFloat(string name)
         {
             if (Floats.TryGetValue(name, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+        
+        public ShaderProgram SetVec2(string name, Vector2 value)
+        {
+            Vec2s[name] = value;
+            return this;
+        }
+        
+        public Vector2? GetVec2(string name)
+        {
+            if (Vec2s.TryGetValue(name, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+        
+        public ShaderProgram SetVec3(string name, Vector3 value)
+        {
+            Vec3s[name] = value;
+            return this;
+        }
+        
+        public Vector3? GetVec3(string name)
+        {
+            if (Vec3s.TryGetValue(name, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+        
+        public ShaderProgram SetVec4(string name, Vector4 value)
+        {
+            Vec4s[name] = value;
+            return this;
+        }
+        
+        public Vector4? GetVec4(string name)
+        {
+            if (Vec4s.TryGetValue(name, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+        
+        public ShaderProgram SetMat4(string name, Matrix4x4 value)
+        {
+            Mat4s[name] = value;
+            return this;
+        }
+        
+        public Matrix4x4? GetMat4(string name)
+        {
+            if (Mat4s.TryGetValue(name, out var value))
             {
                 return value;
             }

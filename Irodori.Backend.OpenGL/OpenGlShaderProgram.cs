@@ -24,7 +24,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
         Id = 0;
     }
 
-    public IrodoriReturn<IrodoriVoid, IDrawError> UseProgram()
+    public unsafe IrodoriReturn<IrodoriVoid, IDrawError> UseProgram()
     {
         OpenGlException? glError;
         var gl = ((OpenGlBackend)Backend).Gl;
@@ -74,6 +74,50 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
         foreach (var (key, value) in Floats)
         {
             gl.Uniform1(gl.GetUniformLocation(Id, key), value);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+        }
+        
+        foreach (var (key, value) in Vec2s)
+        {
+            gl.Uniform2(gl.GetUniformLocation(Id, key), value.X, value.Y);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+        }
+        
+        foreach (var (key, value) in Vec3s)
+        {
+            gl.Uniform3(gl.GetUniformLocation(Id, key), value.X, value.Y, value.Z);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+        }
+        
+        foreach (var (key, value) in Vec4s)
+        {
+            gl.Uniform4(gl.GetUniformLocation(Id, key), value.X, value.Y, value.Z, value.W);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+        }
+        
+        foreach (var (key, value) in Mat4s)
+        {
+            gl.UniformMatrix4(gl.GetUniformLocation(Id, key), 1, false, (float*) &value);
             
             glError = gl.CheckError();
             if (glError != null)

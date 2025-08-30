@@ -165,4 +165,16 @@ public class SdlWindow : Window
         if (_backend.RendererApi == ERendererAPI.OpenGl)
             SDL.SDL_GL_SwapWindow(Handle);
     }
+
+    public override uint GetWidth()
+    {
+        SDL.SDL_GetWindowSize(Handle, out int w, out _);
+        return (uint) w;
+    }
+    
+    public override uint GetHeight()
+    {
+        SDL.SDL_GetWindowSize(Handle, out _, out int h);
+        return (uint) h;
+    }
 }

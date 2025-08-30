@@ -2,6 +2,7 @@
 using Irodori.Backend;
 using Irodori.Buffer;
 using Irodori.Error;
+using Irodori.Framebuffer;
 using Irodori.Shader;
 using Irodori.Texture;
 using Irodori.Type;
@@ -121,13 +122,18 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
         return ShaderProgram.Create(_backend);
     }
     
-    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color)
+    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color, FramebufferObject.Uploaded? framebuffer = null)
     {
-        return _backend.Clear(color);
+        return _backend.Clear(color, Window, framebuffer);
     }
     
-    public TextureObject.Unuploaded CreateTexture()
+    public TextureObjectUnuploaded CreateTexture()
     {
-        return TextureObject.Create(_backend);
+        return TextureObjectUnuploaded.Create(_backend);
+    }
+    
+    public FramebufferObject.Unuploaded CreateFramebuffer()
+    {
+        return FramebufferObject.Create(_backend);
     }
 }

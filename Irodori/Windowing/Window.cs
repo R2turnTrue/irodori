@@ -42,4 +42,8 @@ public abstract class Window
     public abstract void PollEvents();
 
     public abstract void SwapBuffers();
+
+    public abstract uint GetWidth();
+    
+    public abstract uint GetHeight();
 }

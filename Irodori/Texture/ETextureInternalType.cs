@@ -85,4 +85,8 @@ public enum ETextureInternalType
     CompressedSrgbAlphaBptcUnorm,
     //CompressedRgbaBptcSignedFloat,
     //CCompressedRgbaBptcUnsignedFloat
+    
+    Depth24Stencil8,
+    Depth24Stencil8Ext,
+    Depth24Stencil8Oes
 }
