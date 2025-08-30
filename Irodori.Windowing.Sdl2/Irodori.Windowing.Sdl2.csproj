@@ -4,10 +4,31 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>12</LangVersion>
+        <Title>Irodori.Windowing.Sdl2</Title>
+        <Authors>R2turnTrue</Authors>
+        <Description>SDL2 Windowing Backend for Irodori</Description>
+        <Copyright>Copyright (c) 2025 R2turnTrue</Copyright>
+        <PackageProjectUrl>https://github.com/R2turnTrue/irodori</PackageProjectUrl>
+        <PackageIcon>LogoNuget.png</PackageIcon>
+        <PackageVersion>0.0.1</PackageVersion>
+        <RepositoryUrl>https://github.com/R2turnTrue/irodori/</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Irodori\Irodori.csproj" />
+        <None Include="..\asset\LogoNuget.png">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+            <Link>LogoNuget.png</Link>
+        </None>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+            <Link>README.md</Link>
+        </None>
     </ItemGroup>
 
     <ItemGroup>

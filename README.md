@@ -1,9 +1,17 @@
-![banner](asset/irodori-banner.png)
+![banner](https://raw.githubusercontent.com/R2turnTrue/irodori/refs/heads/master/asset/irodori-banner.png)
 # irodori
 
 > means "to color" in Japanese
 
 a rendering library written in C#
+
+## install
+
+```bash
+dotnet package add Irodori
+dotnet package add Irodori.Backend.OpenGL
+dotnet package add Irodori.Windowing.Sdl2
+```
 
 ## features
 
