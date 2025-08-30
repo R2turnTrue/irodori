@@ -20,4 +20,6 @@ public interface IBackend
     public IrodoriReturn<ShaderProgram.Linked, IShaderError> LinkShader(ShaderProgram.BeforeLinking program);
     
     public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color);
+    
+    IrodoriReturn<Texture.TextureObject.Uploaded, ITextureError> UploadTexture(Texture.TextureObject.Unuploaded texture);
 }

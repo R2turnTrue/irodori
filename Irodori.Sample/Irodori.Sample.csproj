@@ -15,4 +15,9 @@
       <ProjectReference Include="..\Irodori\Irodori.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="StbImageSharp" Version="2.30.15" />
+      <EmbeddedResource Include="lab.png" />
+    </ItemGroup>
+
 </Project>

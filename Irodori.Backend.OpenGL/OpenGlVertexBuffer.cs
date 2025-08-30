@@ -164,8 +164,6 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
 
     public override unsafe IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program)
     {
-        var glShaderProgram = (OpenGlShaderProgram)program;
-        
         OpenGlException? glError;
         var gl = ((OpenGlBackend)Backend).Gl;
         
@@ -176,11 +174,11 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
         }
         
-        gl.UseProgram(glShaderProgram.Id);
-        glError = gl.CheckError();
-        if (glError != null)
+        //gl.UseProgram(glShaderProgram.Id);
+        var result = ((OpenGlShaderProgram)program).UseProgram();
+        if (result.Error != null)
         {
-            return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(result.Error);
         }
 
         if (_ebo.HasValue)

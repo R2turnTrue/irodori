@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Irodori.Buffer;
 using Irodori.Error;
 using Irodori.Shader;
+using Irodori.Texture;
 using Irodori.Type;
 using Irodori.Windowing;
 using Silk.NET.Core.Contexts;
@@ -62,5 +63,10 @@ public class OpenGlBackend : IBackend
         }
         
         return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
+    }
+
+    public IrodoriReturn<TextureObject.Uploaded, ITextureError> UploadTexture(TextureObject.Unuploaded texture)
+    {
+        return new OpenGlTexture().Upload(texture);
     }
 }

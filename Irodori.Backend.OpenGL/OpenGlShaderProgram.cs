@@ -24,6 +24,67 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
         Id = 0;
     }
 
+    public IrodoriReturn<IrodoriVoid, IDrawError> UseProgram()
+    {
+        OpenGlException? glError;
+        var gl = ((OpenGlBackend)Backend).Gl;
+        gl.UseProgram(Id);
+
+        int curTexture = 0;
+        foreach (var (key, texture) in Textures)
+        {
+            gl.ActiveTexture(TextureUnit.Texture0 + curTexture);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+            
+            gl.BindTexture(TextureTarget.Texture2D, ((OpenGlTexture)texture).Id);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+            
+            gl.Uniform1(gl.GetUniformLocation(Id, key), curTexture);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+            
+            curTexture++;
+        }
+
+        foreach (var (key, value) in Integers)
+        {
+            gl.Uniform1(gl.GetUniformLocation(Id, key), value);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+        }
+        
+        foreach (var (key, value) in Floats)
+        {
+            gl.Uniform1(gl.GetUniformLocation(Id, key), value);
+            
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            }
+        }
+        
+        return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
+    }
+
     public IrodoriReturn<Linked, IShaderError> Link(BeforeLinking program)
     {
         OpenGlException? glError;

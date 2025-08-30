@@ -3,6 +3,7 @@ using Irodori.Backend;
 using Irodori.Buffer;
 using Irodori.Error;
 using Irodori.Shader;
+using Irodori.Texture;
 using Irodori.Type;
 using Irodori.Windowing;
 
@@ -123,5 +124,10 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
     public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color)
     {
         return _backend.Clear(color);
+    }
+    
+    public TextureObject.Unuploaded CreateTexture()
+    {
+        return TextureObject.Create(_backend);
     }
 }

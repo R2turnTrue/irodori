@@ -1,10 +1,15 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
 using Irodori.Backend.OpenGL;
 using Irodori.Buffer;
 using Irodori.Shader;
+using Irodori.Texture;
 using Irodori.Windowing;
 using Irodori.Windowing.Sdl2;
+using StbImageSharp;
 
 namespace Irodori.Sample;
 
@@ -34,9 +39,12 @@ in vec2 TexCoord;
 in vec3 ourColor;
 out vec4 out_color;
 
+uniform sampler2D tex;
+
 void main()
 {
-    out_color = vec4(ourColor.r, ourColor.g, ourColor.b, 1.0);
+    //out_color = vec4(TexCoord.x, TexCoord.y, 0.0, 1.0);
+    out_color = texture(tex, vec2(TexCoord.x, 1.0 - TexCoord.y)) * vec4(ourColor, 1.0);
 }";
     
     static unsafe void Main(string[] args)
@@ -53,6 +61,28 @@ void main()
             })
             .Init()
             .Unwrap();
+        
+        byte[] texBuffer = [];
+        var assembly = Assembly.GetExecutingAssembly();
+        Console.WriteLine(string.Join('/', assembly.GetManifestResourceNames()));
+        using (Stream stream = assembly.GetManifestResourceStream("Irodori.Sample.lab.png")!)
+        {
+            if (stream == null) throw new MissingManifestResourceException("Resource not found");
+            texBuffer = new byte[stream.Length];
+            stream.Read(texBuffer, 0, texBuffer.Length);
+        }
+        ImageResult image = ImageResult.FromMemory(texBuffer, ColorComponents.RedGreenBlueAlpha);
+        
+        TextureObject.Uploaded texture;
+        fixed (byte* p = image.Data)
+        {
+            texture = gfx.CreateTexture()
+                .WithMipmap(0)
+                .WithTextureType(ETextureInternalType.Rgba)
+                .WithSize(image.Width, image.Height)
+                .Upload(TextureObject.PixelFormat.Rgba, TextureObject.PixelType.UnsignedByte, (IntPtr)p)
+                .Unwrap();
+        }
 
         var vertexData = VertexData.Create<Vector3, Vector3, Vector2>()
             .AddVertex(new Vector3( 0.5f,  0.5f, 0), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 1.0f))
@@ -86,9 +116,11 @@ void main()
             .Unwrap();
         Console.WriteLine("Program linked");
         
+        program.SetTexture("tex", texture);
+        
         vertexShader.Dispose();
         fragmentShader.Dispose();
-
+        
         while (!gfx.Window.ShouldClose)
         {
             gfx.Window.PollEvents();

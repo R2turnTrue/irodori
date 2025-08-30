@@ -3,7 +3,7 @@ using Silk.NET.OpenGL;
 
 namespace Irodori.Backend.OpenGL;
 
-public class OpenGlException(GLEnum error) : Exception(error.ToString()), IBufferError, IShaderError, IDrawError
+public class OpenGlException(GLEnum error) : Exception(error.ToString()), IBufferError, IShaderError, IDrawError, ITextureError
 {
     
 }

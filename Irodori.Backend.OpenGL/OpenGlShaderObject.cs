@@ -21,7 +21,7 @@ public class OpenGlShaderObject : ShaderObject.Compiled
         OpenGlException? glError;
         
         var gl = ((OpenGlBackend)Backend).Gl;
-        Id = gl.CreateShader(shader.Type.ToSilkShaderType());
+        Id = gl.CreateShader(shader.Type.ToSilk());
         glError = gl.CheckError();
         if (glError != null)
         {
