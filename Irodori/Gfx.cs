@@ -74,8 +74,8 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
     {
         get;
         private set;
-    }
-    
+    } = null!; // Cannot be null in normal use. if it is, it's a library bug.
+
     private Gfx(TBackend backend, IWindowing<TW> windowing, Window.InitConfig config)
     { 
         _backend = backend;

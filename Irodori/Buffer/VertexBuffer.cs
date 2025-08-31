@@ -9,8 +9,8 @@ namespace Irodori.Buffer;
 
 public class VertexBuffer
 {
-    public VertexBufferFormat Format { get; private set; }
-    public IBackend Backend { get; private set; }
+    public VertexBufferFormat Format { get; }
+    public IBackend Backend { get; }
 
     public VertexBuffer(VertexBufferFormat Format, IBackend Backend)
     {

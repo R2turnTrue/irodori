@@ -1,4 +1,5 @@
-﻿using Irodori.Buffer;
+﻿using Irodori.Backend;
+using Irodori.Buffer;
 using Irodori.Error;
 using Irodori.Type;
 
@@ -6,11 +7,9 @@ namespace Irodori.Texture;
 
 public class TextureObjectUnuploaded : TextureObject<TextureObjectUnuploaded>
 {
-    public TextureData Data { get; private set; }
-        
-    internal TextureObjectUnuploaded()
-    {
-    }
+    internal TextureObjectUnuploaded(IBackend backend) : base(backend) { }
+    
+    public TextureData? Data { get; private set; }
 
     public IrodoriReturn<TextureObjectUploaded> Upload(TextureData data)
     {

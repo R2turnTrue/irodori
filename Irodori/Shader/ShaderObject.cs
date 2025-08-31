@@ -6,14 +6,23 @@ namespace Irodori.Shader;
 
 public abstract class ShaderObject
 {
-    public IBackend Backend { get; protected set; }
-    public EShaderType Type { get; protected set; }
+    public IBackend Backend { get; }
+    public EShaderType Type { get; }
+
+    private ShaderObject(IBackend backend, EShaderType type)
+    {
+        Backend = backend;
+        Type = type;
+    }
     
     public class BeforeCompile : ShaderObject
     {
-        public string Source { get; internal set; }
+        public string Source { get; }
         
-        internal BeforeCompile() { }
+        internal BeforeCompile(IBackend backend, EShaderType type, string source) : base(backend, type)
+        {
+            Source = source;
+        }
         
         public IrodoriReturn<Compiled> Compile()
         {
@@ -23,16 +32,13 @@ public abstract class ShaderObject
     
     public abstract class Compiled : ShaderObject, IDisposable
     {
+        protected Compiled(IBackend backend, EShaderType type) : base(backend, type) { }
+        
         public abstract void Dispose();
     }
 
     internal static BeforeCompile Create(IBackend backend, EShaderType type, string source)
     {
-        return new BeforeCompile
-        {
-            Backend = backend,
-            Type = type,
-            Source = source
-        };
+        return new BeforeCompile(backend, type, source);
     }
 }

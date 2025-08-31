@@ -9,12 +9,8 @@ namespace Irodori.Backend.OpenGL;
 public class OpenGlShaderObject : ShaderObject.Compiled
 {
     public uint Id { get; private set; }
-    
-    internal OpenGlShaderObject(BeforeCompile buffer)
-    {
-        this.Backend = buffer.Backend;
-        this.Type = buffer.Type;
-    }
+
+    internal OpenGlShaderObject(BeforeCompile buffer) : base(buffer.Backend, buffer.Type) {}
 
     public IrodoriReturn<Compiled> Compile(BeforeCompile shader)
     {

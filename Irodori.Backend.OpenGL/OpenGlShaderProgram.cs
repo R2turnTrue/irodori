@@ -8,11 +8,8 @@ namespace Irodori.Backend.OpenGL;
 public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
 {
     public uint Id { get; private set; }
-    
-    internal OpenGlShaderProgram(BeforeLinking program)
-    {
-        this.Backend = program.Backend;
-    }
+
+    internal OpenGlShaderProgram(BeforeLinking program) : base(program.Backend) {}
     
     public override void Dispose()
     {

@@ -18,17 +18,17 @@ public class SdlWindow : Window
     
     internal static IrodoriReturn<SdlWindow> Create(InitConfig config, IBackend backend)
     {
-        var win = new SdlWindow();
-        return win.Init(config, backend);
+        var win = new SdlWindow(backend);
+        return win.Init(config);
     }
 
-    private SdlWindow()
-    {
-    }
-    
-    internal IrodoriReturn<SdlWindow> Init(InitConfig config, IBackend backend)
+    private SdlWindow(IBackend backend)
     {
         _backend = backend;
+    }
+    
+    internal IrodoriReturn<SdlWindow> Init(InitConfig config)
+    {
         var flag = SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN;
         
         if (config.Fullscreen)
@@ -41,7 +41,7 @@ public class SdlWindow : Window
             flag |= SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
         }
 
-        switch (backend.RendererApi)
+        switch (_backend.RendererApi)
         {
             case ERendererAPI.OpenGl:
                 flag |= SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL;
@@ -62,7 +62,7 @@ public class SdlWindow : Window
             case ERendererAPI.WebGpu:
             case ERendererAPI.WebGl:
                 return IrodoriReturn<SdlWindow>
-                    .Failure(new SdlUnsupportedBackendException($"SDL2 does not support {backend.RendererApi}"));
+                    .Failure(new SdlUnsupportedBackendException($"SDL2 does not support {_backend.RendererApi}"));
         }
         
         Handle = SDL2.SDL.SDL_CreateWindow(

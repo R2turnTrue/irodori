@@ -85,7 +85,7 @@ public class OpenGlBackend : IBackend
 
     IrodoriReturn<TextureObjectUploaded> IBackend.UploadTexture(TextureObjectUnuploaded texture)
     {
-        return new OpenGlTexture().Upload(texture);
+        return new OpenGlTexture(this).Upload(texture);
     }
 
     IrodoriReturn<FramebufferObject.Uploaded> IBackend.UploadFramebuffer(FramebufferObject.Unuploaded framebuffer)

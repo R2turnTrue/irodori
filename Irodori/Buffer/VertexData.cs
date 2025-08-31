@@ -95,9 +95,7 @@ public interface IVertexData
         public IntPtr ToPointer()
         {
             IntPtr ptr = Marshal.AllocHGlobal(SizeInBytes);
-
-            /*** is this needed? */
-#if DOUBT
+            
             IntPtr current = ptr;
             
             foreach (var vertex in _vertices)
@@ -105,7 +103,6 @@ public interface IVertexData
                 Marshal.StructureToPtr(vertex.Item1, current, false);
                 current += sizeof(T1);
             }
-#endif
 
             return ptr;
         }

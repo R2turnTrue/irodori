@@ -8,11 +8,16 @@ namespace Irodori.Shader;
 
 public abstract class ShaderProgram
 {
-    public IBackend Backend { get; protected set; }
+    public IBackend Backend { get; }
+
+    private ShaderProgram(IBackend backend)
+    {
+        Backend = backend;
+    }
     
     public class BeforeLinking : ShaderProgram
     {
-        internal BeforeLinking() { }
+        internal BeforeLinking(IBackend backend) : base(backend) { }
         
         public List<ShaderObject> Shaders { get; } = new();
         
@@ -30,6 +35,8 @@ public abstract class ShaderProgram
     
     public abstract class Linked : ShaderProgram, IDisposable
     {
+        protected Linked(IBackend backend) : base(backend) { }
+        
         protected Dictionary<string, TextureObjectUploaded> Textures { get; } = new();
         protected Dictionary<string, int> Integers { get; } = new();
         protected Dictionary<string, float> Floats { get; } = new();
@@ -156,9 +163,6 @@ public abstract class ShaderProgram
 
     internal static BeforeLinking Create(IBackend backend)
     {
-        return new BeforeLinking
-        {
-            Backend = backend
-        };
+        return new BeforeLinking(backend);
     }
 }

@@ -4,7 +4,8 @@ using Irodori.Type;
 
 namespace Irodori.Texture;
 
-public abstract class TextureObject<TSelf> where TSelf : TextureObject<TSelf>
+public abstract class TextureObject<TSelf>(IBackend backend)
+    where TSelf : TextureObject<TSelf>
 {
     public int Width { get; protected set; }
     public int Height { get; protected set; }
@@ -32,14 +33,11 @@ public abstract class TextureObject<TSelf> where TSelf : TextureObject<TSelf>
         UpdateProperties();
         return (TSelf) this;
     }
-    
-    public IBackend Backend { get; protected set; }
-    
+
+    public IBackend Backend { get; } = backend;
+
     internal static TextureObjectUnuploaded Create(IBackend backend)
     {
-        return new TextureObjectUnuploaded
-        {
-            Backend = backend
-        };
+        return new TextureObjectUnuploaded(backend);
     }
 }

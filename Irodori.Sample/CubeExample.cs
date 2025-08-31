@@ -115,14 +115,14 @@ void main()
         #endregion Framebuffer
 
         #region Resource Load
-        byte[] texBuffer = [];
+        byte[] texBuffer;
         var assembly = Assembly.GetExecutingAssembly();
         Console.WriteLine(string.Join('/', assembly.GetManifestResourceNames()));
         using (Stream stream = assembly.GetManifestResourceStream("Irodori.Sample.lab.png")!)
         {
             if (stream == null) throw new MissingManifestResourceException("Resource not found");
             texBuffer = new byte[stream.Length];
-            stream.Read(texBuffer, 0, texBuffer.Length);
+            stream.ReadExactly(texBuffer);
         }
         #endregion
 

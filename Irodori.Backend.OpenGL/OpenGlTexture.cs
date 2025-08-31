@@ -8,16 +8,13 @@ namespace Irodori.Backend.OpenGL;
 public class OpenGlTexture : TextureObjectUploaded
 {
     public uint Id { get; private set; }
-    
-    internal OpenGlTexture()
-    {
-    }
 
+    internal OpenGlTexture(IBackend backend) : base(backend) { }
+    
     public unsafe IrodoriReturn<TextureObjectUploaded> Upload(TextureObjectUnuploaded texture)
     {
         this.Width = texture.Width;
         this.Height = texture.Height;
-        this.Backend = texture.Backend;
         this.MinFilter = texture.MinFilter;
         this.MagFilter = texture.MagFilter;
         this.WrapX = texture.WrapX;
@@ -25,6 +22,9 @@ public class OpenGlTexture : TextureObjectUploaded
         var gl = ((OpenGlBackend)Backend).Gl;
         if (gl == null)
             return IrodoriReturn<TextureObjectUploaded>.Failure(new GeneralNullExceptionError());
+        
+        if (texture.Data == null)
+            throw new InvalidOperationException("Texture data is null"); // must NOT happen in normal case. if happens, it's a library bug.
 
         OpenGlException? glError;
         
