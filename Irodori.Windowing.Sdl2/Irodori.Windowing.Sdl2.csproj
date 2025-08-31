@@ -11,7 +11,6 @@
         <Copyright>Copyright (c) 2025 R2turnTrue</Copyright>
         <PackageProjectUrl>https://github.com/R2turnTrue/irodori</PackageProjectUrl>
         <PackageIcon>LogoNuget.png</PackageIcon>
-        <PackageVersion>0.0.1</PackageVersion>
         <RepositoryUrl>https://github.com/R2turnTrue/irodori/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
