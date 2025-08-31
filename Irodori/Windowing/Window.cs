@@ -25,9 +25,9 @@ public abstract class Window
     
     public abstract bool ShouldClose { get; protected set; }
     
-    public abstract IrodoriReturn<IntPtr, IProcAddressError> GetGlProcAddress(string procName);
+    public abstract IrodoriReturn<IntPtr> GetGlProcAddress(string procName);
     
-    public abstract IrodoriReturn<IntPtr, IContextError> CreateGlContext();
+    public abstract IrodoriReturn<IntPtr> CreateGlContext();
     
     public abstract void DeleteGlContext(IntPtr ctx);
 

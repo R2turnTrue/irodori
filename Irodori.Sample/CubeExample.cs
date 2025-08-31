@@ -145,7 +145,7 @@ void main()
         #endregion
         
         #region Vertex Buffer
-        var vertexData = VertexData.Create<Vector3, Vector2>()
+        var vertexData = IVertexData.Create<Vector3, Vector2>()
             .AddVertex(new Vector3(-0.5f, -0.5f, -0.5f), new Vector2(0.0f, 0.0f))
             .AddVertex(new Vector3(0.5f, -0.5f, -0.5f), new Vector2(1.0f, 0.0f))
             .AddVertex(new Vector3(0.5f, 0.5f, -0.5f), new Vector2(1.0f, 1.0f))
@@ -190,7 +190,7 @@ void main()
             .Upload(vertexData)
             .Unwrap();
         
-        var quadData = VertexData.Create<Vector3, Vector2>()
+        var quadData = IVertexData.Create<Vector3, Vector2>()
             .AddVertex(new Vector3(1.0f, 1.0f, 0.0f), new Vector2(1.0f, 1.0f))
             .AddVertex(new Vector3(1.0f, -1.0f, 0.0f), new Vector2(1.0f, 0.0f))
             .AddVertex(new Vector3(-1.0f, -1.0f, 0.0f), new Vector2(0.0f, 0.0f))

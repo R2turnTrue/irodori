@@ -15,7 +15,7 @@ public abstract class ShaderObject
         
         internal BeforeCompile() { }
         
-        public IrodoriReturn<Compiled, IShaderError> Compile()
+        public IrodoriReturn<Compiled> Compile()
         {
             return Backend.CompileShader(this);
         }
