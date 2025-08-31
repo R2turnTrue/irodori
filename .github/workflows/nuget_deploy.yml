@@ -24,6 +24,7 @@ jobs:
       uses: peter-evans/create-pull-request@v7
       with:
         commit-message: "auto: update changelog"
+        base: "master"
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
