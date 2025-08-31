@@ -13,18 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: mikepenz/release-changelog-builder-action@v5
-      id: build_changelog
-      name: Build Changelog
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Update Changelog
-      run: echo ${{ steps.build_changelog.outputs.changelog }} > CHANGELOG.md
-    - name: Create Changelog Pull Request
-      uses: peter-evans/create-pull-request@v7
-      with:
-        commit-message: "auto: update changelog"
-        base: "master"
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
