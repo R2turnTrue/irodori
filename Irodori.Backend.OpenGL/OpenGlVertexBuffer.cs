@@ -182,7 +182,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         
         //gl.UseProgram(glShaderProgram.Id);
         var result = ((OpenGlShaderProgram)program).UseProgram();
-        if (result.Error != null)
+        if (result.IsError())
         {
             return IrodoriState.NotSure(result.Error);
         }

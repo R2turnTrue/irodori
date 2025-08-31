@@ -21,7 +21,7 @@ public class OpenGlBackend : IBackend
     IrodoriState IBackend.Initialize(Window window)
     {
         var ctxRes = IrodoriSilkContext.Create(window);
-        if (ctxRes.Error != null)
+        if (ctxRes.IsError())
         {
             return IrodoriState.NotSure(new OpenGlContextFailedException(ctxRes.Error.ToString() ?? ""));
         }
@@ -90,6 +90,6 @@ public class OpenGlBackend : IBackend
 
     IrodoriReturn<FramebufferObject.Uploaded> IBackend.UploadFramebuffer(FramebufferObject.Unuploaded framebuffer)
     {
-        return new OpenGlFramebuffer().Upload(framebuffer);
+        return new OpenGlFramebuffer(this).Upload(framebuffer);
     }
 }

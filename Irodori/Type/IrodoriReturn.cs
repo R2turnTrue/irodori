@@ -6,6 +6,7 @@ namespace Irodori.Type;
 public class IrodoriState
 {
     public IState Error;
+    
     protected IrodoriState(IState error)
     {
         Error = error;

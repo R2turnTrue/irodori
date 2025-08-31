@@ -17,7 +17,7 @@ class Program
 {
     static unsafe void Main(string[] args)
     {
-        TriangleExample.Run(args);
-        //CubeExample.Run(args);
+        //TriangleExample.Run(args);
+        CubeExample.Run(args);
     }
 }

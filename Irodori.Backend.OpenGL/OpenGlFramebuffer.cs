@@ -10,7 +10,7 @@ public class OpenGlFramebuffer : FramebufferObject.Uploaded
     public uint Id { get; private set; }
     public uint RboId { get; private set; }
     
-    public OpenGlFramebuffer() : base(new OpenGlBackend()) {}
+    public OpenGlFramebuffer(OpenGlBackend backend) : base(backend) {}
 
     public IrodoriReturn<Uploaded> Upload(Unuploaded framebuffer)
     {
