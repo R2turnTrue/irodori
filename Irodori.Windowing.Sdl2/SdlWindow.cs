@@ -16,7 +16,7 @@ public class SdlWindow : Window
         private set;
     }
     
-    internal static IrodoriReturn<SdlWindow, IWindowingError> Create(InitConfig config, IBackend backend)
+    internal static IrodoriReturn<SdlWindow> Create(InitConfig config, IBackend backend)
     {
         var win = new SdlWindow();
         return win.Init(config, backend);
@@ -26,7 +26,7 @@ public class SdlWindow : Window
     {
     }
     
-    internal IrodoriReturn<SdlWindow, IWindowingError> Init(InitConfig config, IBackend backend)
+    internal IrodoriReturn<SdlWindow> Init(InitConfig config, IBackend backend)
     {
         _backend = backend;
         var flag = SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN;
@@ -61,7 +61,7 @@ public class SdlWindow : Window
             case ERendererAPI.DirectX12:
             case ERendererAPI.WebGpu:
             case ERendererAPI.WebGl:
-                return IrodoriReturn<SdlWindow, IWindowingError>
+                return IrodoriReturn<SdlWindow>
                     .Failure(new SdlUnsupportedBackendException($"SDL2 does not support {backend.RendererApi}"));
         }
         
@@ -76,11 +76,11 @@ public class SdlWindow : Window
 
         if (Handle == IntPtr.Zero)
         {
-            return IrodoriReturn<SdlWindow, IWindowingError>
+            return IrodoriReturn<SdlWindow>
                 .Failure(new SdlWindowCreateFailedException(SDL2.SDL.SDL_GetError()));
         }
         
-        return IrodoriReturn<SdlWindow, IWindowingError>.Success(this);
+        return IrodoriReturn<SdlWindow>.Success(this);
     }
 
     public override bool ShouldClose
@@ -89,21 +89,21 @@ public class SdlWindow : Window
         protected set;
     }
 
-    public override IrodoriReturn<IntPtr, IProcAddressError> GetGlProcAddress(string procName)
+    public override IrodoriReturn<IntPtr> GetGlProcAddress(string procName)
     {
         SDL.SDL_ClearError();
         var addr = SDL.SDL_GL_GetProcAddress(procName);
 
         if (addr == IntPtr.Zero)
         {
-            return IrodoriReturn<IntPtr, IProcAddressError>
+            return IrodoriReturn<IntPtr>
                 .Failure(new SdlGetProcAddressFailedException(SDL.SDL_GetError()));
         }
         
-        return IrodoriReturn<IntPtr, IProcAddressError>.Success(addr);
+        return IrodoriReturn<IntPtr>.Success(addr);
     }
 
-    public override IrodoriReturn<IntPtr, IContextError> CreateGlContext()
+    public override IrodoriReturn<IntPtr> CreateGlContext()
     {
         SDL.SDL_ClearError();
 
@@ -111,11 +111,11 @@ public class SdlWindow : Window
 
         if (ctx == IntPtr.Zero)
         {
-            return IrodoriReturn<IntPtr, IContextError>
+            return IrodoriReturn<IntPtr>
                 .Failure(new SdlGlContextFailedException(SDL.SDL_GetError()));
         }
         
-        return IrodoriReturn<IntPtr, IContextError>.Success(ctx);
+        return IrodoriReturn<IntPtr>.Success(ctx);
     }
 
     public override void DeleteGlContext(IntPtr ctx)

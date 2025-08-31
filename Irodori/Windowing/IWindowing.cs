@@ -6,5 +6,5 @@ namespace Irodori.Windowing;
 
 public interface IWindowing<T> where T : Window
 {
-    IrodoriReturn<T, IWindowingError> CreateWindow(Window.InitConfig config, IBackend backend);
+    IrodoriReturn<T> CreateWindow(Window.InitConfig config, IBackend backend);
 }

@@ -13,7 +13,7 @@ public class OpenGlTexture : TextureObjectUploaded
     {
     }
 
-    public unsafe IrodoriReturn<TextureObjectUploaded, ITextureError> Upload(TextureObjectUnuploaded texture)
+    public unsafe IrodoriReturn<TextureObjectUploaded> Upload(TextureObjectUnuploaded texture)
     {
         this.Width = texture.Width;
         this.Height = texture.Height;
@@ -23,6 +23,8 @@ public class OpenGlTexture : TextureObjectUploaded
         this.WrapX = texture.WrapX;
         this.WrapY = texture.WrapY;
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null)
+            return IrodoriReturn<TextureObjectUploaded>.Failure(new GeneralNullExceptionError());
 
         OpenGlException? glError;
         
@@ -30,14 +32,14 @@ public class OpenGlTexture : TextureObjectUploaded
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<TextureObjectUploaded, ITextureError>.Failure(glError);
+            return IrodoriReturn<TextureObjectUploaded>.Failure(glError);
         }
         
         gl.BindTexture(TextureTarget.Texture2D, Id);
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<TextureObjectUploaded, ITextureError>.Failure(glError);
+            return IrodoriReturn<TextureObjectUploaded>.Failure(glError);
         }
         
         UpdateProperties();
@@ -48,12 +50,12 @@ public class OpenGlTexture : TextureObjectUploaded
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<TextureObjectUploaded, ITextureError>.Failure(glError);
+            return IrodoriReturn<TextureObjectUploaded>.Failure(glError);
         }
         
         gl.BindTexture(TextureTarget.Texture2D, 0);
         
-        return IrodoriReturn<TextureObjectUploaded, ITextureError>.Success(this);
+        return IrodoriReturn<TextureObjectUploaded>.Success(this);
     }
 
     public override void Dispose()
@@ -61,7 +63,7 @@ public class OpenGlTexture : TextureObjectUploaded
         if (Id == 0) return;
         
         var gl = ((OpenGlBackend)Backend).Gl;
-        gl.DeleteTexture(Id);
+        if(gl != null) gl.DeleteTexture(Id);
         
         Id = 0;
     }
@@ -69,6 +71,7 @@ public class OpenGlTexture : TextureObjectUploaded
     protected override void UpdateProperties()
     {
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null) return;
         
         gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, WrapX.ToSilk());
         gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, WrapY.ToSilk());

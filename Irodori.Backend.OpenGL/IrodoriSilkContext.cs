@@ -11,18 +11,22 @@ public unsafe class IrodoriSilkContext : IGLContext
     private nint _ctx;
     private Window _window;
 
-    public IrodoriReturn<IrodoriVoid, IContextError> Create(Window window)
+    private IrodoriSilkContext(Window window) : base() { this._window = window; }
+    
+    /** Consturctor MUST be called only once. */
+    public static IrodoriReturn<IrodoriSilkContext> Create(Window window)
     {
-        _window = window;
+        IrodoriSilkContext ret = new IrodoriSilkContext(window);
+
         var ctxRes = window.CreateGlContext();
 
         if (ctxRes.Value == IntPtr.Zero)
         {
-            return IrodoriReturn<IrodoriVoid, IContextError>.Failure(ctxRes.Error);
+            return IrodoriReturn<IrodoriSilkContext>.NotSure(ctxRes.Error);
         }
 
-        _ctx = ctxRes.Value;
-        return IrodoriReturn<IrodoriVoid, IContextError>.Success(IrodoriVoid.Void);
+        ret._ctx = ctxRes.Value;
+        return IrodoriReturn<IrodoriSilkContext>.Success(ret);
     }
     
     public void Dispose()

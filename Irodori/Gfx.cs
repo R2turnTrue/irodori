@@ -55,7 +55,7 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
             return new InitializerFinalStep(_backend, _windowing, config);
         }
 
-        public IrodoriReturn<Gfx<TBackend, TW>, IInitializationError> Init()
+        public IrodoriReturn<Gfx<TBackend, TW>> Init()
         {
             return new Gfx<TBackend, TW>(_backend, _windowing, _windowConfig).Init();
         }
@@ -83,27 +83,27 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
         _windowConfig = config;
     }
 
-    private IrodoriReturn<Gfx<TBackend, TW>, IInitializationError> Init()
+    private IrodoriReturn<Gfx<TBackend, TW>> Init()
     {
         var winResult = _windowing.CreateWindow(_windowConfig, _backend);
-
+        
         if (winResult.Value == null)
         {
-            return IrodoriReturn<Gfx<TBackend, TW>, IInitializationError>
-                .Failure(winResult.Error);
+            return IrodoriReturn<Gfx<TBackend, TW>>
+                .Failure(new GeneralNullExceptionError());
         }
 
         Window = winResult.Value;
         
         var beResult = _backend.Initialize(Window);
 
-        if (beResult.Error != null)
+        if (beResult.IsError())
         {
-            return IrodoriReturn<Gfx<TBackend, TW>, IInitializationError>
-                .Failure(beResult.Error);
+            return IrodoriReturn<Gfx<TBackend, TW>>
+                .NotSure(beResult.Error);
         }
 
-        return IrodoriReturn<Gfx<TBackend, TW>, IInitializationError>
+        return IrodoriReturn<Gfx<TBackend, TW>>
             .Success(this);
     }
 
@@ -122,7 +122,7 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
         return ShaderProgram.Create(_backend);
     }
     
-    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color, FramebufferObject.Uploaded? framebuffer = null)
+    public IrodoriState Clear(Color color, FramebufferObject.Uploaded? framebuffer = null)
     {
         return _backend.Clear(color, Window, framebuffer);
     }

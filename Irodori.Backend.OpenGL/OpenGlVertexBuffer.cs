@@ -16,29 +16,27 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
     
     private int _indexCount = 0;
 
-    internal OpenGlVertexBuffer(Unuploaded buffer)
-    {
-        this.Backend = buffer.Backend;
-        this.Format = buffer.Format;
-    }
+    internal OpenGlVertexBuffer(Unuploaded buffer) 
+    : base(buffer.Format, buffer.Backend) {}
     
-    public unsafe IrodoriReturn<Uploaded, IBufferError> Init(Unuploaded buffer)
+    public unsafe IrodoriReturn<Uploaded> Init(Unuploaded buffer)
     {
         OpenGlException? glError;
         
         var gl = ((OpenGlBackend)buffer.Backend).Gl;
+        if (gl == null) return IrodoriReturn<Uploaded>.Failure(new GeneralNullExceptionError());
 
         _vao = gl.GenVertexArray();
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+            return IrodoriReturn<Uploaded>.Failure(glError);
         }
         
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+            return IrodoriReturn<Uploaded>.Failure(glError);
         }
         
         gl.BindVertexArray(_vao);
@@ -46,21 +44,21 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+            return IrodoriReturn<Uploaded>.Failure(glError);
         }
         
         _vbo = gl.GenBuffer();
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+            return IrodoriReturn<Uploaded>.Failure(glError);
         }
         
         gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+            return IrodoriReturn<Uploaded>.Failure(glError);
         }
         
         #if DEBUG
@@ -76,7 +74,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+            return IrodoriReturn<Uploaded>.Failure(glError);
         }
         
         Marshal.FreeHGlobal(dataPtr);
@@ -88,7 +86,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+                return IrodoriReturn<Uploaded>.Failure(glError);
             }
             
             fixed (void* indicesPtr = &buffer.Indices[0])
@@ -99,7 +97,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+                return IrodoriReturn<Uploaded>.Failure(glError);
             }
         }
 
@@ -113,7 +111,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+                return IrodoriReturn<Uploaded>.Failure(glError);
             }
 
             nint ptrSize = sig.Count * sig.Type.GetSizeInBytes();
@@ -126,7 +124,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<Uploaded, IBufferError>.Failure(glError);
+                return IrodoriReturn<Uploaded>.Failure(glError);
             }
             
             positionLoc += 1;
@@ -137,12 +135,13 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
         gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
 
-        return IrodoriReturn<Uploaded, IBufferError>.Success(this);
+        return IrodoriReturn<Uploaded>.Success(this);
     }
 
     public override void Dispose()
     {
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null) return;
         
         if (_ebo.HasValue)
         {
@@ -163,10 +162,11 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         }
     }
 
-    public override unsafe IrodoriReturn<IrodoriVoid, IDrawError> Draw(ShaderProgram program, FramebufferObject? framebuffer = null)
+    public override unsafe IrodoriState Draw(ShaderProgram program, FramebufferObject? framebuffer = null)
     {
         OpenGlException? glError;
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null) return IrodoriState.Failure(new GeneralNullExceptionError());
         
         if (framebuffer != null)
             gl.BindFramebuffer(FramebufferTarget.Framebuffer, ((OpenGlFramebuffer)framebuffer).Id);
@@ -177,14 +177,14 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            return IrodoriState.Failure(glError);
         }
         
         //gl.UseProgram(glShaderProgram.Id);
         var result = ((OpenGlShaderProgram)program).UseProgram();
-        if (result.Error != null)
+        if (result.IsError())
         {
-            return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(result.Error);
+            return IrodoriState.NotSure(result.Error);
         }
 
         if (_ebo.HasValue)
@@ -198,6 +198,6 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         gl.UseProgram(0);
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-        return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
+        return IrodoriState.Success();
     }
 }

@@ -16,18 +16,17 @@ public class OpenGlBackend : IBackend
 {
     public ERendererAPI RendererApi => ERendererAPI.OpenGl;
 
-    public GL Gl { get; private set; }
+    public GL? Gl { get; private set; }
     
-    public IrodoriReturn<IrodoriVoid, IBackendInitError> Initialize(Window window)
+    IrodoriState IBackend.Initialize(Window window)
     {
-        var ctx = new IrodoriSilkContext();
-        var ctxRes = ctx.Create(window);
-        if (ctxRes.Error != null)
+        var ctxRes = IrodoriSilkContext.Create(window);
+        if (ctxRes.IsError())
         {
-            return IrodoriReturn<IrodoriVoid, IBackendInitError>.Failure(new OpenGlContextFailedException(ctxRes.Error.ToString()));
+            return IrodoriState.NotSure(new OpenGlContextFailedException(ctxRes.Error.ToString() ?? ""));
         }
         
-        Gl = GL.GetApi(ctx);
+        Gl = GL.GetApi(ctxRes.Value);
         
         Gl.Enable(EnableCap.DepthTest);
         
@@ -36,26 +35,28 @@ public class OpenGlBackend : IBackend
         Console.WriteLine("OpenGL Vendor: " + Gl.GetStringS(StringName.Vendor));
         #endif
         
-        return IrodoriReturn<IrodoriVoid, IBackendInitError>.Success(IrodoriVoid.Void);
+        return IrodoriState.Success();
     }
 
-    public IrodoriReturn<VertexBuffer.Uploaded, IBufferError> UploadVertexBuffer(VertexBuffer.Unuploaded buffer)
+    IrodoriReturn<VertexBuffer.Uploaded> IBackend.UploadVertexBuffer(VertexBuffer.Unuploaded buffer)
     {
         return new OpenGlVertexBuffer(buffer).Init(buffer);
     }
 
-    public IrodoriReturn<ShaderObject.Compiled, IShaderError> CompileShader(ShaderObject.BeforeCompile shader)
+    IrodoriReturn<ShaderObject.Compiled> IBackend.CompileShader(ShaderObject.BeforeCompile shader)
     {
         return new OpenGlShaderObject(shader).Compile(shader);
     }
 
-    public IrodoriReturn<ShaderProgram.Linked, IShaderError> LinkShader(ShaderProgram.BeforeLinking program)
+    IrodoriReturn<ShaderProgram.Linked> IBackend.LinkShader(ShaderProgram.BeforeLinking program)
     {
         return new OpenGlShaderProgram(program).Link(program);
     }
 
-    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color, Window window, FramebufferObject.Uploaded? framebuffer = null)
+    IrodoriState IBackend.Clear(Color color, Window window, FramebufferObject.Uploaded? framebuffer)
     {
+        if (Gl == null) return IrodoriState.Failure(new GeneralNullExceptionError());
+
         if (framebuffer != null)
         {
             var fb = (OpenGlFramebuffer)framebuffer;
@@ -74,21 +75,21 @@ public class OpenGlBackend : IBackend
         glError = Gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+            return IrodoriState.Failure(glError);
         }
         
         Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         
-        return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
+        return IrodoriState.Success();
     }
 
-    public IrodoriReturn<TextureObjectUploaded, ITextureError> UploadTexture(TextureObjectUnuploaded texture)
+    IrodoriReturn<TextureObjectUploaded> IBackend.UploadTexture(TextureObjectUnuploaded texture)
     {
         return new OpenGlTexture().Upload(texture);
     }
 
-    public IrodoriReturn<FramebufferObject.Uploaded, IFramebufferError> UploadFramebuffer(FramebufferObject.Unuploaded framebuffer)
+    IrodoriReturn<FramebufferObject.Uploaded> IBackend.UploadFramebuffer(FramebufferObject.Unuploaded framebuffer)
     {
-        return new OpenGlFramebuffer().Upload(framebuffer);
+        return new OpenGlFramebuffer(this).Upload(framebuffer);
     }
 }

@@ -22,7 +22,7 @@ public abstract class ShaderProgram
             return this;
         }
         
-        public IrodoriReturn<Linked, IShaderError> Link()
+        public IrodoriReturn<Linked> Link()
         {
             return Backend.LinkShader(this);
         }

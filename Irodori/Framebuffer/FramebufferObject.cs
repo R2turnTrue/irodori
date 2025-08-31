@@ -7,30 +7,30 @@ namespace Irodori.Framebuffer;
 
 public abstract class FramebufferObject
 {
-    public IBackend Backend { get; set; }
-    
-    internal FramebufferObject()
+    public IBackend Backend { get; private set; }
+
+    internal FramebufferObject(IBackend be)
     {
+        this.Backend = be;
     }
     
     public static FramebufferObject.Unuploaded Create(IBackend backend)
     {
-        return new Unuploaded
-        {
-            Backend = backend,
-            ColorAttachments = new(),
-            DepthAttachment = null
-        };
+        return new Unuploaded(backend, new(), null);
     }
     
     public class Unuploaded : FramebufferObject
     {
-        public List<TextureObjectUploaded> ColorAttachments { get; internal set; }
-        public TextureObjectUploaded? DepthAttachment { get; internal set; }
+        public List<TextureObjectUploaded> ColorAttachments { get; private set; }
+        public TextureObjectUploaded? DepthAttachment { get; private set; }
     
-        public ETextureInternalType DepthRboType { get; protected set; } = ETextureInternalType.Depth24Stencil8;
-        
-        internal Unuploaded() { }
+        public ETextureInternalType DepthRboType { get; private set; } = ETextureInternalType.Depth24Stencil8;
+
+        internal Unuploaded(IBackend be, List<TextureObjectUploaded> colourattachments, TextureObjectUploaded? DepthAttachment) : base(be)
+        {
+            this.ColorAttachments = colourattachments;
+            this.DepthAttachment = DepthAttachment;
+        }
         
         public Unuploaded WithColorAttachment(TextureObjectUploaded texture)
         {
@@ -44,17 +44,19 @@ public abstract class FramebufferObject
             return this;
         }
         
-        public IrodoriReturn<Uploaded, IFramebufferError> Upload()
+        public IrodoriReturn<Uploaded> Upload()
         {
             return Backend.UploadFramebuffer(this);
         }
     }
-    
+
     public abstract class Uploaded : FramebufferObject, IDisposable
     {
         public uint Width { get; protected set; }
         public uint Height { get; protected set; }
-        
+
         public abstract void Dispose();
+        
+        public Uploaded(IBackend be) : base(be) {}
     }
 }

@@ -69,7 +69,7 @@ void main()
         vsh.Dispose();
         fsh.Dispose();
 
-        var vertexData = VertexData.Create<Vector3, Vector3>()
+        var vertexData = IVertexData.Create<Vector3, Vector3>()
             .AddVertex(new Vector3(-0.5f, -0.5f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f))
             .AddVertex(new Vector3(0.5f, -0.5f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f))
             .AddVertex(new Vector3(0.0f, 0.5f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f));

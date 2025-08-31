@@ -16,23 +16,28 @@ public class OpenGlShaderObject : ShaderObject.Compiled
         this.Type = buffer.Type;
     }
 
-    public IrodoriReturn<Compiled, IShaderError> Compile(BeforeCompile shader)
+    public IrodoriReturn<Compiled> Compile(BeforeCompile shader)
     {
         OpenGlException? glError;
         
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null)
+        {
+            return IrodoriReturn<Compiled>.Failure(new GeneralNullExceptionError());
+        }
+
         Id = gl.CreateShader(shader.Type.ToSilk());
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Compiled, IShaderError>.Failure(glError);
+            return IrodoriReturn<Compiled>.Failure(glError);
         }
         
         gl.ShaderSource(Id, shader.Source);
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Compiled, IShaderError>.Failure(glError);
+            return IrodoriReturn<Compiled>.Failure(glError);
         }
         
         gl.CompileShader(Id);
@@ -40,10 +45,10 @@ public class OpenGlShaderObject : ShaderObject.Compiled
         gl.GetShader(Id, ShaderParameterName.CompileStatus, out int success);
         if (success != (int)GLEnum.True)
         {
-            return IrodoriReturn<Compiled, IShaderError>.Failure(new OpenGlShaderCompilationException(gl.GetShaderInfoLog(Id)));
+            return IrodoriReturn<Compiled>.Failure(new OpenGlShaderCompilationException(gl.GetShaderInfoLog(Id)));
         }
         
-        return IrodoriReturn<Compiled, IShaderError>.Success(this);
+        return IrodoriReturn<Compiled>.Success(this);
     }
 
     public override void Dispose()
@@ -51,7 +56,8 @@ public class OpenGlShaderObject : ShaderObject.Compiled
         if (Id == 0) return;
         
         var gl = ((OpenGlBackend)Backend).Gl;
-        gl.DeleteShader(Id);
+        if(gl != null)
+            gl.DeleteShader(Id);
         
         Id = 0;
     }

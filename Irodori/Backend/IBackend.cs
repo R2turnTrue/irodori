@@ -13,17 +13,17 @@ public interface IBackend
 {
     ERendererAPI RendererApi { get; }
     
-    public IrodoriReturn<IrodoriVoid, IBackendInitError> Initialize(Window window);
+    public IrodoriState Initialize(Window window);
     
-    public IrodoriReturn<VertexBuffer.Uploaded, IBufferError> UploadVertexBuffer(VertexBuffer.Unuploaded buffer);
+    public IrodoriReturn<VertexBuffer.Uploaded> UploadVertexBuffer(VertexBuffer.Unuploaded buffer);
     
-    public IrodoriReturn<ShaderObject.Compiled, IShaderError> CompileShader(ShaderObject.BeforeCompile shader);
+    public IrodoriReturn<ShaderObject.Compiled> CompileShader(ShaderObject.BeforeCompile shader);
     
-    public IrodoriReturn<ShaderProgram.Linked, IShaderError> LinkShader(ShaderProgram.BeforeLinking program);
+    public IrodoriReturn<ShaderProgram.Linked> LinkShader(ShaderProgram.BeforeLinking program);
     
-    public IrodoriReturn<IrodoriVoid, IDrawError> Clear(Color color, Window window, FramebufferObject.Uploaded? framebuffer = null);
+    public IrodoriState Clear(Color color, Window window, FramebufferObject.Uploaded? framebuffer = null);
     
-    IrodoriReturn<TextureObjectUploaded, ITextureError> UploadTexture(TextureObjectUnuploaded texture);
+    IrodoriReturn<TextureObjectUploaded> UploadTexture(TextureObjectUnuploaded texture);
     
-    IrodoriReturn<FramebufferObject.Uploaded, IFramebufferError> UploadFramebuffer(FramebufferObject.Unuploaded framebuffer);
+    IrodoriReturn<FramebufferObject.Uploaded> UploadFramebuffer(FramebufferObject.Unuploaded framebuffer);
 }

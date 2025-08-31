@@ -19,15 +19,18 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
         if (Id == 0) return;
         
         var gl = ((OpenGlBackend)Backend).Gl;
-        gl.DeleteShader(Id);
+        if(gl != null) gl.DeleteShader(Id);
 
         Id = 0;
     }
 
-    public unsafe IrodoriReturn<IrodoriVoid, IDrawError> UseProgram()
+    public unsafe IrodoriState UseProgram()
     {
         OpenGlException? glError;
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null)
+            return IrodoriState.Failure(new GeneralNullExceptionError());
+
         gl.UseProgram(Id);
 
         int curTexture = 0;
@@ -38,7 +41,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
             
             gl.BindTexture(TextureTarget.Texture2D, ((OpenGlTexture)texture).Id);
@@ -46,7 +49,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
             
             gl.Uniform1(gl.GetUniformLocation(Id, key), curTexture);
@@ -54,7 +57,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
             
             curTexture++;
@@ -67,7 +70,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
         }
         
@@ -78,7 +81,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
         }
         
@@ -89,7 +92,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
         }
         
@@ -100,7 +103,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
         }
         
@@ -111,7 +114,7 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
         }
         
@@ -122,23 +125,28 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
             glError = gl.CheckError();
             if (glError != null)
             {
-                return IrodoriReturn<IrodoriVoid, IDrawError>.Failure(glError);
+                return IrodoriState.Failure(glError);
             }
         }
         
-        return IrodoriReturn<IrodoriVoid, IDrawError>.Success(IrodoriVoid.Void);
+        return IrodoriState.Success();
     }
 
-    public IrodoriReturn<Linked, IShaderError> Link(BeforeLinking program)
+    public IrodoriReturn<Linked> Link(BeforeLinking program)
     {
         OpenGlException? glError;
         
         var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null)
+        {
+            return IrodoriReturn<Linked>.Failure(new GeneralNullExceptionError());
+        }
+
         Id = gl.CreateProgram();
         glError = gl.CheckError();
         if (glError != null)
         {
-            return IrodoriReturn<Linked, IShaderError>.Failure(glError);
+            return IrodoriReturn<Linked>.Failure(glError);
         }
         
         foreach (var shader in program.Shaders)
@@ -150,9 +158,9 @@ public class OpenGlShaderProgram : ShaderProgram.Linked, IDisposable
         gl.GetProgram(Id, ProgramPropertyARB.LinkStatus, out int success);
         if (success != (int)GLEnum.True)
         {
-            return IrodoriReturn<Linked, IShaderError>.Failure(new OpenGlShaderLinkException(gl.GetProgramInfoLog(Id)));
+            return IrodoriReturn<Linked>.Failure(new OpenGlShaderLinkException(gl.GetProgramInfoLog(Id)));
         }
         
-        return IrodoriReturn<Linked, IShaderError>.Success(this);
+        return IrodoriReturn<Linked>.Success(this);
     }
 }

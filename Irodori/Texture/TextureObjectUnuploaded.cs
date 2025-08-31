@@ -12,7 +12,7 @@ public class TextureObjectUnuploaded : TextureObject<TextureObjectUnuploaded>
     {
     }
 
-    public IrodoriReturn<TextureObjectUploaded, ITextureError> Upload(TextureData data)
+    public IrodoriReturn<TextureObjectUploaded> Upload(TextureData data)
     {
         Data = data;
         return Backend.UploadTexture(this);
