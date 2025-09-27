@@ -3,7 +3,7 @@ using Irodori.Type;
 
 namespace Irodori.Windowing;
 
-public abstract class Window
+public abstract class Window : IDisposable
 {
     public struct InitConfig
     {
@@ -46,4 +46,8 @@ public abstract class Window
     public abstract uint GetWidth();
     
     public abstract uint GetHeight();
+    
+    public virtual void Dispose()
+    {
+    }
 }

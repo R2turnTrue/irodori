@@ -92,4 +92,9 @@ public class OpenGlBackend : IBackend
     {
         return new OpenGlFramebuffer(this).Upload(framebuffer);
     }
+
+    public void Dispose()
+    {
+        Gl?.Dispose();
+    }
 }

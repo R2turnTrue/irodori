@@ -10,7 +10,7 @@ using Irodori.Windowing;
 
 namespace Irodori;
 
-public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
+public class Gfx<TBackend, TW> : IDisposable where TBackend: IBackend where TW : Window
 {
     public class BeforeInitialize
     {
@@ -135,5 +135,11 @@ public class Gfx<TBackend, TW> where TBackend: IBackend where TW : Window
     public FramebufferObject.Unuploaded CreateFramebuffer()
     {
         return FramebufferObject.Create(_backend);
+    }
+
+    public void Dispose()
+    {
+        _backend.Dispose();
+        Window.Dispose();
     }
 }

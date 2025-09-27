@@ -9,7 +9,7 @@ using Irodori.Windowing;
 
 namespace Irodori.Backend;
 
-public interface IBackend
+public interface IBackend : IDisposable
 {
     ERendererAPI RendererApi { get; }
     
