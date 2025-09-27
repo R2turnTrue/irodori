@@ -269,7 +269,7 @@ void main()
 
             gfx.Clear(Color.Black);
 
-            quadBuffer.Draw(quadProgram);
+            quadBuffer.Draw(quadProgram);//, scissor: new Rectangle(50, 300, 800, 300));
             
             gfx.Window.SwapBuffers();
         }

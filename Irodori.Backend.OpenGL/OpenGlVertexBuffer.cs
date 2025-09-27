@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using Irodori.Buffer;
 using Irodori.Error;
 using Irodori.Framebuffer;
@@ -162,11 +163,21 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         }
     }
 
-    public override unsafe IrodoriState Draw(ShaderProgram program, FramebufferObject? framebuffer = null)
+    public override unsafe IrodoriState Draw(ShaderProgram program, FramebufferObject? framebuffer = null, Rectangle? scissor = null)
     {
         OpenGlException? glError;
         var gl = ((OpenGlBackend)Backend).Gl;
         if (gl == null) return IrodoriState.Failure(new GeneralNullExceptionError());
+        
+        if (scissor.HasValue)
+        {
+            gl.Enable(EnableCap.ScissorTest);
+            gl.Scissor(scissor.Value.X, scissor.Value.Y, (uint)scissor.Value.Width, (uint)scissor.Value.Height);
+        }
+        else
+        {
+            gl.Disable(EnableCap.ScissorTest);
+        }
         
         if (framebuffer != null)
             gl.BindFramebuffer(FramebufferTarget.Framebuffer, ((OpenGlFramebuffer)framebuffer).Id);
@@ -197,6 +208,8 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         gl.BindVertexArray(0);
         gl.UseProgram(0);
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        
+        gl.Disable(EnableCap.ScissorTest);
 
         return IrodoriState.Success();
     }

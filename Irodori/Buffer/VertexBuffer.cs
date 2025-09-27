@@ -1,4 +1,5 @@
-﻿using Irodori.Backend;
+﻿using System.Drawing;
+using Irodori.Backend;
 using Irodori.Error;
 using Irodori.Framebuffer;
 using Irodori.Shader;
@@ -41,7 +42,7 @@ public class VertexBuffer
     {
         public abstract void Dispose();
 
-        public abstract IrodoriState Draw(ShaderProgram program, FramebufferObject? framebuffer = null);
+        public abstract IrodoriState Draw(ShaderProgram program, FramebufferObject? framebuffer = null, Rectangle? scissor = null);
         public Uploaded(VertexBufferFormat Format, IBackend backend) : base(Format, backend) { }
     }
 
