@@ -7,6 +7,9 @@ namespace Irodori.Backend.OpenGL;
 
 public class OpenGlTexture : TextureObjectUploaded
 {
+    private EPixelFormat _lastPixelFormat;
+    private EPixelType _lastPixelType;
+    
     public uint Id { get; private set; }
 
     internal OpenGlTexture(IBackend backend) : base(backend) { }
@@ -55,6 +58,9 @@ public class OpenGlTexture : TextureObjectUploaded
         
         gl.BindTexture(TextureTarget.Texture2D, 0);
         
+        _lastPixelFormat = texture.Data.DataFormat;
+        _lastPixelType = texture.Data.DataType;
+        
         return IrodoriReturn<TextureObjectUploaded>.Success(this);
     }
 
@@ -66,6 +72,33 @@ public class OpenGlTexture : TextureObjectUploaded
         if(gl != null) gl.DeleteTexture(Id);
         
         Id = 0;
+    }
+
+    public override unsafe IrodoriReturn<TextureObjectUploaded> UpdatePartial(PartialTextureData data, int xOffset, int yOffset, int subWidth, int subHeight)
+    {
+        var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null)
+            return IrodoriReturn<TextureObjectUploaded>.Failure(new GeneralNullExceptionError());
+        
+        gl.BindTexture(TextureTarget.Texture2D, Id);
+        var glError = gl.CheckError();
+        if (glError != null)
+        {
+            return IrodoriReturn<TextureObjectUploaded>.Failure(glError);
+        }
+        
+        gl.TexSubImage2D(TextureTarget.Texture2D, 0, xOffset, yOffset, (uint) subWidth, (uint) subHeight, _lastPixelFormat.ToSilk(), _lastPixelType.ToSilk(), data.Pointer);
+        data.FreePtrIfNeed();
+        
+        glError = gl.CheckError();
+        if (glError != null)
+        {
+            return IrodoriReturn<TextureObjectUploaded>.Failure(glError);
+        }
+        
+        gl.BindTexture(TextureTarget.Texture2D, 0);
+        
+        return IrodoriReturn<TextureObjectUploaded>.Success(this);
     }
 
     protected override void UpdateProperties()
