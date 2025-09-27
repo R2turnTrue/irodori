@@ -177,4 +177,10 @@ public class SdlWindow : Window
         SDL.SDL_GetWindowSize(Handle, out _, out int h);
         return (uint) h;
     }
+
+    public override void Dispose()
+    {
+        SDL.SDL_DestroyWindow(Handle);
+        SDL.SDL_Quit();
+    }
 }
