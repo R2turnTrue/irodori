@@ -10,7 +10,32 @@ using Irodori.Windowing;
 
 namespace Irodori;
 
-public class Gfx<TBackend, TW> : IDisposable where TBackend: IBackend where TW : Window
+public abstract class Gfx : IDisposable
+{
+    public abstract Window Window
+    {
+        get;
+        protected set;
+    }
+
+    public abstract IBackend Backend { get; }
+
+    public abstract VertexBuffer.Unuploaded CreateVertexBuffer(VertexBufferFormat vertexFormat);
+
+    public abstract ShaderObject.BeforeCompile CreateShader(EShaderType type, string source);
+
+    public abstract ShaderProgram.BeforeLinking CreateShaderProgram();
+
+    public abstract IrodoriState Clear(Color color, FramebufferObject.Uploaded? framebuffer = null);
+
+    public abstract TextureObjectUnuploaded CreateTexture();
+
+    public abstract FramebufferObject.Unuploaded CreateFramebuffer();
+
+    public abstract void Dispose();
+}
+
+public class Gfx<TBackend, TW> : Gfx where TBackend: IBackend where TW : Window
 {
     public class BeforeInitialize
     {
@@ -70,12 +95,6 @@ public class Gfx<TBackend, TW> : IDisposable where TBackend: IBackend where TW :
     private readonly IWindowing<TW> _windowing;
     private readonly Window.InitConfig _windowConfig;
     
-    public TW Window
-    {
-        get;
-        private set;
-    } = null!; // Cannot be null in normal use. if it is, it's a library bug.
-
     private Gfx(TBackend backend, IWindowing<TW> windowing, Window.InitConfig config)
     { 
         _backend = backend;
@@ -107,37 +126,41 @@ public class Gfx<TBackend, TW> : IDisposable where TBackend: IBackend where TW :
             .Success(this);
     }
 
-    public VertexBuffer.Unuploaded CreateVertexBuffer<TFormat>(TFormat vertexFormat) where TFormat : VertexBufferFormat
+    public override Window Window { get; protected set; }
+
+    public override IBackend Backend => _backend;
+
+    public override VertexBuffer.Unuploaded CreateVertexBuffer(VertexBufferFormat vertexFormat)
     {
         return VertexBuffer.Create(_backend, vertexFormat);
     }
     
-    public ShaderObject.BeforeCompile CreateShader(EShaderType type, string source)
+    public override ShaderObject.BeforeCompile CreateShader(EShaderType type, string source)
     {
         return ShaderObject.Create(_backend, type, source);
     }
     
-    public ShaderProgram.BeforeLinking CreateShaderProgram()
+    public override ShaderProgram.BeforeLinking CreateShaderProgram()
     {
         return ShaderProgram.Create(_backend);
     }
     
-    public IrodoriState Clear(Color color, FramebufferObject.Uploaded? framebuffer = null)
+    public override IrodoriState Clear(Color color, FramebufferObject.Uploaded? framebuffer = null)
     {
         return _backend.Clear(color, Window, framebuffer);
     }
     
-    public TextureObjectUnuploaded CreateTexture()
+    public override TextureObjectUnuploaded CreateTexture()
     {
         return TextureObjectUnuploaded.Create(_backend);
     }
     
-    public FramebufferObject.Unuploaded CreateFramebuffer()
+    public override FramebufferObject.Unuploaded CreateFramebuffer()
     {
         return FramebufferObject.Create(_backend);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         _backend.Dispose();
         Window.Dispose();
