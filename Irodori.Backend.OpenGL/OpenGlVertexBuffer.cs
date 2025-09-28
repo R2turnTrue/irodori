@@ -236,7 +236,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         }
         
         var dataPtr = data.ToPointer();
-        gl.BufferSubData(GLEnum.ArrayBuffer, offset, (nuint)data.SizeInBytes, dataPtr);
+        gl.BufferSubData(GLEnum.ArrayBuffer, offset, (nuint)data.SizeInBytes, dataPtr.ToPointer());
         Marshal.FreeHGlobal(dataPtr);
         if (glError != null)
         {
