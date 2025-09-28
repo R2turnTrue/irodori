@@ -15,7 +15,7 @@ public interface IBackend : IDisposable
     
     public IrodoriState Initialize(Window window);
     
-    public IrodoriReturn<VertexBuffer.Uploaded> UploadVertexBuffer(VertexBuffer.Unuploaded buffer);
+    public IrodoriReturn<VertexBuffer.Uploaded> UploadVertexBuffer(VertexBuffer.Unuploaded buffer, bool dynamic);
     
     public IrodoriReturn<ShaderObject.Compiled> CompileShader(ShaderObject.BeforeCompile shader);
     

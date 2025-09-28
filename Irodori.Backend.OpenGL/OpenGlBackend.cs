@@ -38,9 +38,9 @@ public class OpenGlBackend : IBackend
         return IrodoriState.Success();
     }
 
-    IrodoriReturn<VertexBuffer.Uploaded> IBackend.UploadVertexBuffer(VertexBuffer.Unuploaded buffer)
+    IrodoriReturn<VertexBuffer.Uploaded> IBackend.UploadVertexBuffer(VertexBuffer.Unuploaded buffer, bool dynamic)
     {
-        return new OpenGlVertexBuffer(buffer).Init(buffer);
+        return new OpenGlVertexBuffer(buffer).Init(buffer, dynamic);
     }
 
     IrodoriReturn<ShaderObject.Compiled> IBackend.CompileShader(ShaderObject.BeforeCompile shader)

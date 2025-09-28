@@ -30,11 +30,11 @@ public class VertexBuffer
             this.Data = prm_Data;
         }
 
-        public IrodoriReturn<Uploaded> Upload(IVertexData data, int[]? indices = null)
+        public IrodoriReturn<Uploaded> Upload(IVertexData data, int[]? indices = null, bool dynamic = false)
         {
             Data = data;
             Indices = indices;
-            return this.Backend.UploadVertexBuffer(this);
+            return this.Backend.UploadVertexBuffer(this, dynamic);
         }
     }
 
@@ -44,6 +44,8 @@ public class VertexBuffer
 
         public abstract IrodoriState Draw(ShaderProgram program, FramebufferObject? framebuffer = null, Rectangle? scissor = null);
         public Uploaded(VertexBufferFormat Format, IBackend backend) : base(Format, backend) { }
+
+        public abstract IrodoriReturn<Uploaded> Update(IVertexData data, int[]? indices = null, nint offset = 0);
     }
 
     internal static Unuploaded Create(IBackend backend, VertexBufferFormat format, IVertexData vtxdata)

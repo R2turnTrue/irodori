@@ -20,7 +20,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
     internal OpenGlVertexBuffer(Unuploaded buffer) 
     : base(buffer.Format, buffer.Backend) {}
     
-    public unsafe IrodoriReturn<Uploaded> Init(Unuploaded buffer)
+    public unsafe IrodoriReturn<Uploaded> Init(Unuploaded buffer, bool dynamic)
     {
         OpenGlException? glError;
         
@@ -70,7 +70,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         #endif
         
         var dataPtr = buffer.Data.ToPointer();
-        gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint) (buffer.Data.SizeInBytes), dataPtr.ToPointer(), BufferUsageARB.StaticDraw);
+        gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint) (buffer.Data.SizeInBytes), dataPtr.ToPointer(), dynamic ? BufferUsageARB.DynamicDraw : BufferUsageARB.StaticDraw);
         _indexCount = buffer.Data.Count;
         glError = gl.CheckError();
         if (glError != null)
@@ -92,7 +92,7 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
             
             fixed (void* indicesPtr = &buffer.Indices[0])
             {
-                gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint) (buffer.Indices.Length * sizeof(int)), indicesPtr, BufferUsageARB.StaticDraw);
+                gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint) (buffer.Indices.Length * sizeof(int)), indicesPtr, dynamic ? BufferUsageARB.DynamicDraw : BufferUsageARB.StaticDraw);
             }
             _indexCount = buffer.Indices.Length;
             glError = gl.CheckError();
@@ -212,5 +212,62 @@ public class OpenGlVertexBuffer : VertexBuffer.Uploaded
         gl.Disable(EnableCap.ScissorTest);
 
         return IrodoriState.Success();
+    }
+
+    public override unsafe IrodoriReturn<Uploaded> Update(IVertexData data, int[]? indices = null, nint offset = 0)
+    {
+        OpenGlException? glError;
+        
+        var gl = ((OpenGlBackend)Backend).Gl;
+        if (gl == null) return IrodoriReturn<Uploaded>.Failure(new GeneralNullExceptionError());
+
+        gl.BindVertexArray(_vao);
+        glError = gl.CheckError();
+        if (glError != null)
+        {
+            return IrodoriReturn<Uploaded>.Failure(glError);
+        }
+        
+        gl.BindBuffer(GLEnum.ArrayBuffer, _vbo);
+        glError = gl.CheckError();
+        if (glError != null)
+        {
+            return IrodoriReturn<Uploaded>.Failure(glError);
+        }
+        
+        var dataPtr = data.ToPointer();
+        gl.BufferSubData(GLEnum.ArrayBuffer, offset, (nuint)data.SizeInBytes, dataPtr);
+        Marshal.FreeHGlobal(dataPtr);
+        if (glError != null)
+        {
+            return IrodoriReturn<Uploaded>.Failure(glError);
+        }
+
+        if (indices != null && _ebo.HasValue)
+        {
+            gl.BindBuffer(GLEnum.ElementArrayBuffer, _ebo.Value);
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<Uploaded>.Failure(glError);
+            }
+            
+            fixed (void* indicesPtr = &indices[0])
+            {
+                gl.BufferSubData(BufferTargetARB.ElementArrayBuffer, offset, (nuint) (indices.Length * sizeof(int)), indicesPtr);
+            }
+            _indexCount = indices.Length;
+            glError = gl.CheckError();
+            if (glError != null)
+            {
+                return IrodoriReturn<Uploaded>.Failure(glError);
+            }
+        }
+        
+        gl.BindVertexArray(0);
+        gl.BindBuffer(GLEnum.ArrayBuffer, 0);
+        gl.BindBuffer(GLEnum.ElementArrayBuffer, 0);
+        
+        return IrodoriReturn<Uploaded>.Success(this);
     }
 }
